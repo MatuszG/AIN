@@ -26,7 +26,7 @@ const HomePage = () => {
   const [n, setN] = useState(3);
   const [probOfInit, setProbOfInit] = useState(0);
   const [numOfTournaments, setNumOfTournaments] = useState(1);
-  const [numOfOpponents, setNumOfOpponents] = useState(0);
+  const [numOfOpponents, setNumOfOpponents] = useState(1);
   const [prehistoryLength, setPrehistory] = useState(3);
   const [c1, setC1] = useState(30);
   const [c2, setC2] = useState(30);
@@ -320,7 +320,7 @@ const HomePage = () => {
                 <label htmlFor="debug"> debug</label>
               </div>
               <button className="HomePage-container-start-container-button-btn" onClick={() => Logic(
-                numOfRuns, numOfGenerations, numOfTournaments, popSize, prehistoryLength, n, twoPd,
+                numOfRuns, numOfGenerations, numOfTournaments, numOfOpponents, popSize, prehistoryLength, n, twoPd,
                 c1, c2, c3, c4, d1, d2, d3, d4
                 )}>
                 start

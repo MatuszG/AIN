@@ -3,6 +3,12 @@ export function getBinary() {
     else return 0;
 }
 
+export function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+  }
+
 export function readData(n) {
     return n;
 }
@@ -10,10 +16,8 @@ export function readData(n) {
 export function createRandomInputData(popSize, prehistoryLength, playerNumber, strategyLength) {
     let individuals = [];
     let prehistory = [];
-    for(let i = 0; i < prehistoryLength; i++) {
-        for(let i = 0; i < playerNumber; i++) {
-            prehistory.push(getBinary());
-        }
+    for(let i = 0; i < prehistoryLength*playerNumber; i++) {
+        prehistory.push(getBinary());
     }
     for(let i = 0; i < popSize; i++) {
         let strategy = [];
@@ -30,27 +34,27 @@ class Individual {
     constructor(prehistory, strategy) {
         this.prehistory = prehistory
         this.strategy = strategy
+        this.playedGames = 0;
         this.points = 0;
         this.sumPoints = 0;
     }
     calculate() {
         let sumOfPrehistory = '';
-        this.prehistory.forEach(el => {
+        this.prehistory.slice().reverse().forEach(el => {
             sumOfPrehistory += String(el);
         });
         let strategyId = parseInt(sumOfPrehistory, 2);
-        if(strategyId <= this.strategy.length)
         return this.strategy[strategyId];
-        console.log("Strategy length ERROR");
-        return -1;
     }
     reset() {
         this.sumPoints += this.points;
         this.points = 0;
+        this.playedGames = 0;
     }
     hardReset() {
         this.points = 0;
         this.sumPoints = 0;
+        this.playedGames = 0;
     }
     say() {
         console.log(`prehistory: ${this.prehistory}`);
