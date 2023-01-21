@@ -29,6 +29,7 @@ export default function Logic(
             calcFitness(individuals, elistStrategy);
             console.log("Best player sumPoints: ", findBestPlayer(individuals).sumPoints);
             evolve(individuals, crossoverProb, mutationProb, tournament_size);
+                        // tutaj wykres updatujemy
             resetScoresindividuals(individuals);
         }
     }
