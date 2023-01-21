@@ -17,8 +17,8 @@ const HomePage = () => {
   const [popSize, setPopSize] = useState(2);
   const [numOfGenerations, setNumOfGenerations] = useState(1);
   const [tournamentSize, setTournamentSize] = useState(1);
-  const [crossoverProb, setCrossoverProb] = useState(0);
-  const [mutationProb, setMutationProb] = useState(0);
+  const [crossoverProb, setCrossoverProb] = useState(35);
+  const [mutationProb, setMutationProb] = useState(3);
   const [numOfRuns, setNumOfRuns] = useState(1);
   const [seed, setSeed] = useState(0);
   const [fregGenStart, setFregGenStart] = useState(0);
@@ -321,7 +321,7 @@ const HomePage = () => {
               </div>
               <button className="HomePage-container-start-container-button-btn" onClick={() => Logic(
                 numOfRuns, numOfGenerations, numOfTournaments, numOfOpponents, popSize, prehistoryLength, n, twoPd,
-                c1, c2, c3, c4, d1, d2, d3, d4
+                c1, c2, c3, c4, d1, d2, d3, d4, elistStrategy, mutationProb, crossoverProb, tournamentSize
                 )}>
                 start
               </button>

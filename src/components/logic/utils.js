@@ -30,13 +30,14 @@ export function createRandomInputData(popSize, prehistoryLength, playerNumber, s
 }
 
 
-class Individual {
+export class Individual {
     constructor(prehistory, strategy) {
         this.prehistory = prehistory
         this.strategy = strategy
         this.playedGames = 0;
         this.points = 0;
         this.sumPoints = 0;
+        this.fitness = 0;
     }
     calculate() {
         let sumOfPrehistory = '';

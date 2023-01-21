@@ -1,9 +1,9 @@
-import { crossover, mutation, selection } from './GALogic';
+import { calcFitness, evolve, findBestPlayer } from './GALogic';
 import {readData, createRandomInputData, getRandomInt} from './utils'
 
 export default function Logic(
     numOfRuns, numOfGenerations, numOfTournaments, numOfOpponents, popSize, prehistoryLength, n, twoPd,
-    c1, c2, c3, c4, d1, d2, d3, d4
+    c1, c2, c3, c4, d1, d2, d3, d4, elistStrategy, mutationProb, crossoverProb, tournament_size
 ) {
     let runs = 0;
     let playerNumber = n;
@@ -11,7 +11,6 @@ export default function Logic(
         playerNumber = 2;
     }
     const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
-
     while(runs++ < numOfRuns) {
         let individuals;
         if(playerNumber === 2 && (popSize === 2 || popSize === 3) ||
@@ -27,16 +26,9 @@ export default function Logic(
         for(let generation = 0; generation <= numOfGenerations; generation++) {
             console.log(`Generation: ${generation}`);
             standardGame(numOfTournaments, individuals, playerNumber, numOfOpponents, c1, c2, c3, c4, d1, d2, d3, d4);
-            individuals.forEach(element => {
-                element.reset();
-                console.log("Points: ", element.sumPoints);
-            });
-            console.log("Best player score: ", findBestPlayer(individuals));
-            // implementing GA NOT DONE YET
-            // let sortedIndividuals = selection(individuals);
-            // mutation();
-            // crossover();
-            // reseting scores
+            calcFitness(individuals, elistStrategy);
+            console.log("Best player sumPoints: ", findBestPlayer(individuals).sumPoints);
+            evolve(individuals, crossoverProb, mutationProb, tournament_size);
             resetScoresindividuals(individuals);
         }
     }
@@ -99,6 +91,9 @@ function standardGame(numOfTournaments, individuals, playerNumber, numOfOpponent
         }
         playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
     }
+    individuals.forEach(element => {
+        element.reset();
+    });
 }
 
 function findPlayers(individuals, playerNumber, numOfOpponents) {
@@ -125,16 +120,6 @@ function countCooperators(prehistory) {
         if(prehistory[i] === 1) cooperators++;
     }
     return cooperators;
-}
-
-function findBestPlayer(Individuals) {
-    let score = 0;
-    Individuals.forEach(element => {
-        if(score < element.sumPoints) {
-            score = element.sumPoints;
-        }
-    });
-    return score;
 }
 
 function resetScoresindividuals(Individuals){
