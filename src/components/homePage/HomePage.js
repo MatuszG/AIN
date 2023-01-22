@@ -81,9 +81,12 @@ const HomePage = () => {
         );
       index = textDebug.search("l_preh");
       if (index !== -1)
-        setPrehistory(
-          Number(textDebug.slice(index + 7, textDebug.indexOf(";", index + 7)))
+        console.log(
+          textDebug.slice(index + 7, textDebug.indexOf(";", index + 7))
         );
+      setPrehistory(
+        Number(textDebug.slice(index + 7, textDebug.indexOf(";", index + 7)))
+      );
       index = textDebug.search("length_of_strategy");
       if (index !== -1)
         setPrehistory(
