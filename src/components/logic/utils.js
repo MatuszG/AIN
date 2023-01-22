@@ -1,5 +1,5 @@
-export function getBinary() {
-    if(Math.random() > 0.5) return 1;
+export function getBinary(probOfInit) {
+    if(Math.random() < probOfInit) return 1;
     else return 0;
 }
 
@@ -13,31 +13,31 @@ export function readData(n) {
     return n;
 }
 
-export function createRandomInputData(popSize, prehistoryLength, playerNumber, strategyLength) {
+export function createRandomInputData(popSize, prehistoryLength, playerNumber, strategyLength, probOfInit) {
     let individuals = [];
     let prehistory = [];
     for(let i = 0; i < prehistoryLength*playerNumber; i++) {
-        prehistory.push(getBinary());
+        prehistory.push(getBinary(probOfInit));
     }
     for(let i = 0; i < popSize; i++) {
         let strategy = [];
         for(let i = 0; i < strategyLength; i++) {
-            strategy.push(getBinary());
+            strategy.push(getBinary(probOfInit));
         }
-        individuals.push(new Individual(prehistory, strategy));
+        individuals.push(new Individual(prehistory, strategy, 0));
     }
     return individuals;
 }
 
 
 export class Individual {
-    constructor(prehistory, strategy) {
+    constructor(prehistory, strategy, fitness) {
         this.prehistory = prehistory
         this.strategy = strategy
         this.playedGames = 0;
         this.points = 0;
         this.sumPoints = 0;
-        this.fitness = 0;
+        this.fitness = fitness;
     }
     calculate() {
         let sumOfPrehistory = '';

@@ -12,12 +12,9 @@ export function findBestPlayer(individuals) {
     return player;
 }
 
-export function calcFitness(Individuals, elitist) {
+export function calcFitness(Individuals) {
     let sumFitness = 0;
     let powerValue = 2;
-    if(elitist) {
-        powerValue = 6;
-    }
     for(let i = 0; i < Individuals.length; i++) {
         Individuals[i].fitness = Math.pow(Individuals[i].sumPoints, powerValue);
         sumFitness = Individuals[i].fitness;
@@ -32,19 +29,18 @@ export function calcFitness(Individuals, elitist) {
     }
 }
 
-export function evolve(individuals, crossoverProb, mutationProb, tournament_size) {
+export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
     sortIndividuals(individuals);
     let selectedIndividuals = [];
     let strategyLength = individuals[0].strategy.length;
-    for(let i = 0; i < individuals.length/100; i++) {
-        selectedIndividuals.push[individuals.slice(i, i + 1)];
+    if(elitist) {
+        selectedIndividuals.push(individuals.slice(0, 1));
     }
     while(selectedIndividuals.length < individuals.length) {
         let range = randomRange(strategyLength);
         let firstIndividual = poolSelection(individuals, tournament_size);
         if((range/strategyLength) <= crossoverProb/100) { // crossover
             let secondIndividual = poolSelection(individuals, tournament_size);
-            console.log(secondIndividual);
             if(selectedIndividuals.length === individuals.length - 1){
                 selectedIndividuals.push(crossover(firstIndividual, secondIndividual, range));
             }
@@ -57,6 +53,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
             selectedIndividuals.push(firstIndividual);
         }
     }
+    individuals = selectedIndividuals;
     mutation(individuals, mutationProb);
 }
 
@@ -87,17 +84,17 @@ function mutateBit(bit) {
 }
 
 function poolSelection(individuals, tournament_size) {
-    let ind = individuals[0];
+    let ind = individuals[individuals.length - 1];
     for(let i = 0; i < tournament_size; i++) {
         let random = Math.random();
         for(let i = 0; i < individuals.Length; i++) {
             random -= individuals[i].fitness;
             if(random <= 0 && ind.fitness < individuals[i].fitness ) {
-                ind = new Individual(individuals[i].prehistory, individuals[i].strategy);
+                ind = new Individual(individuals[i].prehistory, individuals[i].strategy, individuals[i].fitness);
             } 
         }
-        return ind = new Individual(individuals[individuals.length - 1].prehistory, individuals[individuals.length - 1].strategy);
     }
+    return new Individual(ind.prehistory, ind.strategy, ind.fitness);
 }
 
 function sortIndividuals(individuals) {

@@ -22,6 +22,7 @@ export default function Logic(
   mutationProb,
   crossoverProb,
   tournament_size,
+  probOfInit,
   setGenerations,
   setSumPoints
 ) {
@@ -42,19 +43,21 @@ export default function Logic(
         popSize,
         prehistoryLength,
         playerNumber,
-        strategyLength
+        strategyLength,
+        probOfInit
       );
     } else {
       individuals = createRandomInputData(
         popSize,
         prehistoryLength,
         playerNumber,
-        strategyLength
+        strategyLength,
+        probOfInit
       );
     }
     if (numOfGenerations == 0) return;
     for (let generation = 0; generation <= numOfGenerations; generation++) {
-      console.log(`Generation: ${generation}`);
+      //console.log(`Generation: ${generation}`);
       standardGame(
         numOfTournaments,
         individuals,
@@ -69,10 +72,10 @@ export default function Logic(
         d3,
         d4
       );
-      calcFitness(individuals, elistStrategy);
-      evolve(individuals, crossoverProb, mutationProb, tournament_size);
+      calcFitness(individuals);
+      evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
-      const sumPoints = findBestPlayer(individuals).sumPoints;
+      const sumPoints = findBestPlayer(individuals).sumPoints/(numOfOpponents*numOfTournaments);
       setSumPoints((prev) => [...prev, sumPoints]);
       resetScoresindividuals(individuals);
     }
@@ -135,7 +138,6 @@ function standardGame(
       } else {
         let preh = playerOutputs.slice().reverse();
         let cooperators = countCooperators(preh);
-        console.log(cooperators);
         for (let j = 0; j < playersIds.length; j++) {
           if (preh[j] === 1) {
             individuals[playersIds[j]].points += 2 * (cooperators - 1);

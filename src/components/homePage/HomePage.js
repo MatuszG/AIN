@@ -24,7 +24,7 @@ const HomePage = () => {
   const [fregGenStart, setFregGenStart] = useState(0);
   const [deltaFreg, setDeltaFreg] = useState(0);
   const [n, setN] = useState(3);
-  const [probOfInit, setProbOfInit] = useState(0);
+  const [probOfInit, setProbOfInit] = useState(50);
   const [numOfTournaments, setNumOfTournaments] = useState(1);
   const [numOfOpponents, setNumOfOpponents] = useState(1);
   const [prehistoryLength, setPrehistory] = useState(3);
@@ -480,6 +480,7 @@ const HomePage = () => {
                     mutationProb,
                     crossoverProb,
                     tournamentSize,
+                    probOfInit,
                     setGenerations,
                     setSumPoints
                   );
