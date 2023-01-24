@@ -9,8 +9,29 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
   }
 
-export function readData(n) {
-    return n;
+export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile) {
+    let individuals;
+    if(strategyFromFile === []) {
+        individuals = createRandomInputData(
+          popSize,
+          prehistoryLength,
+          playerNumber,
+          strategyLength,
+          probOfInit
+        );
+    }
+    else {
+        let prehistory = strategyFromFile[strategyFromFile.length - 1];
+        individuals = [];
+        for(let i = 0; i < popSize; i++) {
+            let strategy = [];
+            for(let i = 0; i < strategyFromFile[popSize].length; i++) {
+                strategy.push(strategyFromFile[popSize][i]);
+            }
+            individuals.push(new Individual(prehistory, strategy, 0));
+        }
+    }
+    return individuals;
 }
 
 export function createRandomInputData(popSize, prehistoryLength, playerNumber, strategyLength, probOfInit) {

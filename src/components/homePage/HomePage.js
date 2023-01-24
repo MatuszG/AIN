@@ -481,6 +481,7 @@ const HomePage = () => {
                     numOfOpponents,
                     popSize,
                     prehistoryLength,
+                    strategyFromFile,
                     n,
                     twoPd,
                     c1,

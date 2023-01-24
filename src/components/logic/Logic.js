@@ -8,6 +8,7 @@ export default function Logic(
   numOfOpponents,
   popSize,
   prehistoryLength,
+  strategyFromFile,
   n,
   twoPd,
   c1,
@@ -29,23 +30,16 @@ export default function Logic(
   let runs = 0;
   let playerNumber = n;
   if (twoPd) {
-    playerNumber = 2;
+    playerNumber = 1.2;
   }
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
   while (runs++ < numOfRuns) {
     let individuals;
     if (
-      (playerNumber === 2 && (popSize === 2 || popSize === 3)) ||
-      (playerNumber === 3 && (popSize === 3 || popSize === 4))
+      (playerNumber === 2 && (popSize === 2 || popSize === 3)) 
+      // || (playerNumber === 3 && (popSize === 3 || popSize === 4))
     ) {
-      // individuals = readData(playerNumber);
-      individuals = createRandomInputData(
-        popSize,
-        prehistoryLength,
-        playerNumber,
-        strategyLength,
-        probOfInit
-      );
+      individuals = readData(strategyFromFile);
     } else {
       individuals = createRandomInputData(
         popSize,
