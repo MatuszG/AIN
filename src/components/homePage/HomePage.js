@@ -497,6 +497,9 @@ const HomePage = () => {
                     crossoverProb,
                     tournamentSize,
                     probOfInit,
+                    debug,
+                    clockSeed,
+                    seed,
                     setGenerations,
                     setSumPoints
                   );

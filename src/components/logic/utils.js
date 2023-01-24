@@ -1,3 +1,5 @@
+export const gener_history_freq = [];
+
 export function getBinary(probOfInit) {
     if(Math.random() < probOfInit) return 1;
     else return 0;
@@ -7,7 +9,11 @@ export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-  }
+}
+
+export function randomRange(strategyLength) {
+    return Math.round(Math.random() * (strategyLength - 1));
+}
 
 export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile) {
     let individuals;
@@ -53,12 +59,14 @@ export function createRandomInputData(popSize, prehistoryLength, playerNumber, s
 
 export class Individual {
     constructor(prehistory, strategy, fitness) {
-        this.prehistory = prehistory
-        this.strategy = strategy
+        this.prehistory = prehistory;
+        this.strategy = strategy;
+        this.fitness = fitness;
         this.playedGames = 0;
         this.points = 0;
         this.sumPoints = 0;
-        this.fitness = fitness;
+        this.fitnessPoints = 0;
+        this.calculates = 0;
     }
     calculate() {
         let sumOfPrehistory = '';
@@ -66,6 +74,8 @@ export class Individual {
             sumOfPrehistory += String(el);
         });
         let strategyId = parseInt(sumOfPrehistory, 2);
+        this.calculates++;
+        gener_history_freq[strategyId]++;
         return this.strategy[strategyId];
     }
     reset() {
@@ -77,6 +87,9 @@ export class Individual {
         this.points = 0;
         this.sumPoints = 0;
         this.playedGames = 0;
+        this.calculates = 0;
+        this.fitnessPoints = 0;
+        this.fitness = 0;
     }
     say() {
         console.log(`prehistory: ${this.prehistory}`);

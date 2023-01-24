@@ -1,5 +1,8 @@
 import { calcFitness, evolve, findBestPlayer } from "./GALogic";
 import { readData, createRandomInputData, getRandomInt } from "./utils";
+import { gener_history_freq } from "./utils";
+
+export const globalSeed = [-1];
 
 export default function Logic(
   numOfRuns,
@@ -24,18 +27,30 @@ export default function Logic(
   crossoverProb,
   tournament_size,
   probOfInit,
+  debug,
+  clockSeed,
+  seed,
   setGenerations,
   setSumPoints
 ) {
+  if(clockSeed) {
+    globalSeed[0] = -1;
+  }
+  else {
+    globalSeed[0] = seed;
+  }
   let runs = 0;
   let playerNumber = n;
   if (twoPd) {
     playerNumber = 2;
   }
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
+  for(let i = 0; i < strategyLength; i++) {
+    gener_history_freq.push(0);
+  }
   while (runs++ < numOfRuns) {
     let individuals;
-    if (
+    if ( debug &&
       (playerNumber === 2 && (popSize === 2 || popSize === 3)) 
       // || (playerNumber === 3 && (popSize === 3 || popSize === 4))
     ) {
@@ -66,10 +81,11 @@ export default function Logic(
         d3,
         d4
       );
-      calcFitness(individuals);
+      calcFitness(individuals, numOfTournaments);
       evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
-      const sumPoints = findBestPlayer(individuals).sumPoints/(numOfOpponents*numOfTournaments);
+      const bestPlayer = findBestPlayer(individuals);
+      const sumPoints = bestPlayer.fitnessPoints;
       setSumPoints((prev) => [...prev, sumPoints]);
       resetScoresindividuals(individuals);
     }

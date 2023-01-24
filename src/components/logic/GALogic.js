@@ -1,4 +1,4 @@
-import {Individual} from './utils'
+import {Individual, randomRange} from './utils'
 
 export function findBestPlayer(individuals) {
     let fitness = 0;
@@ -12,11 +12,13 @@ export function findBestPlayer(individuals) {
     return player;
 }
 
-export function calcFitness(Individuals) {
+export function calcFitness(Individuals, numOfTournaments) {
     let sumFitness = 0;
     let powerValue = 1.2;
     for(let i = 0; i < Individuals.length; i++) {
-        Individuals[i].fitness = Math.pow(Individuals[i].sumPoints, powerValue);
+        // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments), powerValue);
+        Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
+        Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
         sumFitness = Individuals[i].fitness;
     }
     for(let i = 0; i < Individuals.length; i++) {
@@ -33,9 +35,6 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     sortIndividuals(individuals);
     let selectedIndividuals = [];
     let strategyLength = individuals[0].strategy.length;
-    if(elitist) {
-        selectedIndividuals.push(individuals.slice(0, 1));
-    }
     while(selectedIndividuals.length < individuals.length) {
         let range = randomRange(strategyLength);
         let firstIndividual = poolSelection(individuals, tournament_size);
@@ -53,12 +52,13 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
             selectedIndividuals.push(firstIndividual);
         }
     }
+    sortIndividuals(selectedIndividuals);
+    if(elitist) {
+        selectedIndividuals.splice(-1);
+        selectedIndividuals.push(new Individual(individuals[0].prehistory, individuals[0].strategy, individuals[0].fitness));
+    }
     individuals = selectedIndividuals;
     mutation(individuals, mutationProb);
-}
-
-function randomRange(strategyLength) {
-    return Math.round(Math.random() * (strategyLength - 1));
 }
 
 function crossover(firstIndividual, secondIndividual, range) {
