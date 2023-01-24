@@ -45,7 +45,7 @@ const HomePage = () => {
   const [sumPoints, setSumPoints] = useState([]);
   const [textDebug, setTextDebug] = useState("");
   const [strategyLength, setStrategyLength] = useState(2);
-  const [strategyFromFile, setStrategyFromFile] = useState([]);
+  const [strategyFromFile, setStrategyFromFile] = useState();
 
   const showFile = async (e) => {
     e.preventDefault();
@@ -72,6 +72,14 @@ const HomePage = () => {
     link.parentNode.removeChild(link);
   };
 
+  const array = [];
+  for (let i = 0; i < 10; i++) {
+    array[i] = [];
+    for (let j = 0; j < 128; j++) {
+      array[i][j] = null;
+    }
+  }
+
   useEffect(() => {
     if (!debug) {
       setPopSize(2);
@@ -79,7 +87,7 @@ const HomePage = () => {
       setNumOfTournaments(1);
       setNumOfOpponents(1);
       setStrategyLength(2);
-      setStrategyFromFile([]);
+      setStrategyFromFile(array);
     } else {
       let index;
       index = textDebug.search("pop_size");
@@ -108,16 +116,25 @@ const HomePage = () => {
         );
       index = textDebug.indexOf("\n");
       if (index !== -1) {
-        const temp = textDebug.slice(index + 1);
-        setStrategyFromFile(
-          temp
-            .split("")
-            .filter((el) => el !== " ")
-            .map((el) => Number(el))
-        );
+        let pom1 = 0;
+        let pom2 = 0;
+        for (let i = index + 1; i < textDebug.length; i++) {
+          if (textDebug[i] === "\n") {
+            pom1++;
+            pom2 = 0;
+            continue;
+          }
+          if (textDebug[i] === " " || textDebug[i] === "\r") continue;
+          let copy = [...strategyFromFile];
+          copy[pom1][pom2] = Number(textDebug[i]);
+          setStrategyFromFile(copy);
+          pom2++;
+        }
       }
     }
   }, [debug]);
+
+  console.log(strategyFromFile);
 
   const data = {
     labels: generations,
