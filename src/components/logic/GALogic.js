@@ -14,7 +14,7 @@ export function findBestPlayer(individuals) {
 
 export function calcFitness(Individuals) {
     let sumFitness = 0;
-    let powerValue = 2;
+    let powerValue = 1.2;
     for(let i = 0; i < Individuals.length; i++) {
         Individuals[i].fitness = Math.pow(Individuals[i].sumPoints, powerValue);
         sumFitness = Individuals[i].fitness;
@@ -39,7 +39,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     while(selectedIndividuals.length < individuals.length) {
         let range = randomRange(strategyLength);
         let firstIndividual = poolSelection(individuals, tournament_size);
-        if((range/strategyLength) <= crossoverProb/100) { // crossover
+        if((range/strategyLength) <= crossoverProb / 100) {
             let secondIndividual = poolSelection(individuals, tournament_size);
             if(selectedIndividuals.length === individuals.length - 1){
                 selectedIndividuals.push(crossover(firstIndividual, secondIndividual, range));

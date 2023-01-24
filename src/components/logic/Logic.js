@@ -30,7 +30,7 @@ export default function Logic(
   let runs = 0;
   let playerNumber = n;
   if (twoPd) {
-    playerNumber = 1.2;
+    playerNumber = 2;
   }
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
   while (runs++ < numOfRuns) {
