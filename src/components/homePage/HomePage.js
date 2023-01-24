@@ -44,6 +44,8 @@ const HomePage = () => {
   const [generations, setGenerations] = useState([]);
   const [sumPoints, setSumPoints] = useState([]);
   const [textDebug, setTextDebug] = useState("");
+  const [strategyLength, setStrategyLength] = useState(2);
+  const [strategyFromFile, setStrategyFromFile] = useState([]);
 
   const showFile = async (e) => {
     e.preventDefault();
@@ -57,8 +59,12 @@ const HomePage = () => {
 
   const exportInfo = () => {
     const fileData = JSON.stringify("test");
+    const fileData2 = JSON.stringify("test2");
+    const fileData3 = JSON.stringify("test3");
     const blob = new Blob([fileData], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
+    const blob2 = new Blob([fileData2], { type: "text/plain" });
+    const blob3 = new Blob([fileData3], { type: "text/plain" });
+    const url = URL.createObjectURL(blob, blob2, blob3);
     const link = document.createElement("a");
     link.download = "info.txt";
     link.href = url;
@@ -72,6 +78,8 @@ const HomePage = () => {
       setPrehistory(3);
       setNumOfTournaments(1);
       setNumOfOpponents(1);
+      setStrategyLength(2);
+      setStrategyFromFile([]);
     } else {
       let index;
       index = textDebug.search("pop_size");
@@ -81,26 +89,33 @@ const HomePage = () => {
         );
       index = textDebug.search("l_preh");
       if (index !== -1)
-        console.log(
-          textDebug.slice(index + 7, textDebug.indexOf(";", index + 7))
+        setPrehistory(
+          Number(textDebug.slice(index + 7, textDebug.indexOf(";", index + 7)))
         );
-      setPrehistory(
-        Number(textDebug.slice(index + 7, textDebug.indexOf(";", index + 7)))
-      );
       index = textDebug.search("length_of_strategy");
       if (index !== -1)
-        setPrehistory(
+        setStrategyLength(
           Number(
             textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
           )
         );
       index = textDebug.search("num_of_tournaments");
       if (index !== -1)
-        setPrehistory(
+        setNumOfTournaments(
           Number(
             textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
           )
         );
+      index = textDebug.indexOf("\n");
+      if (index !== -1) {
+        const temp = textDebug.slice(index + 1);
+        setStrategyFromFile(
+          temp
+            .split("")
+            .filter((el) => el !== " ")
+            .map((el) => Number(el))
+        );
+      }
     }
   }, [debug]);
 
