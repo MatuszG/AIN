@@ -27,12 +27,19 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
         );
     }
     else {
-        let prehistory = strategyFromFile[strategyFromFile.length - 1];
+        let prehistory = [];
+        let j = 0;
+        while(strategyFromFile[popSize][j] !== null) {
+            prehistory.push(strategyFromFile[popSize][j]);
+            j++;
+        }
         individuals = [];
         for(let i = 0; i < popSize; i++) {
             let strategy = [];
-            for(let i = 0; i < strategyFromFile[popSize].length; i++) {
-                strategy.push(strategyFromFile[popSize][i]);
+            let j = 0;
+            while(strategyFromFile[popSize][j] !== null) {
+                strategy.push(strategyFromFile[popSize][j]);
+                j++;
             }
             individuals.push(new Individual(prehistory, strategy, 0));
         }
@@ -44,12 +51,12 @@ export function createRandomInputData(popSize, prehistoryLength, playerNumber, s
     let individuals = [];
     let prehistory = [];
     for(let i = 0; i < prehistoryLength*playerNumber; i++) {
-        prehistory.push(getBinary(probOfInit));
+        prehistory.push(getBinary(probOfInit/100));
     }
     for(let i = 0; i < popSize; i++) {
         let strategy = [];
         for(let i = 0; i < strategyLength; i++) {
-            strategy.push(getBinary(probOfInit));
+            strategy.push(getBinary(probOfInit/100));
         }
         individuals.push(new Individual(prehistory, strategy, 0));
     }
@@ -73,10 +80,17 @@ export class Individual {
         this.prehistory.slice().reverse().forEach(el => {
             sumOfPrehistory += String(el);
         });
+        // this.prehistory.slice().forEach(el => {
+        //     sumOfPrehistory += String(el);
+        // });
         let strategyId = parseInt(sumOfPrehistory, 2);
         this.calculates++;
         gener_history_freq[strategyId]++;
         return this.strategy[strategyId];
+    }
+    resetPoints() {
+        this.sumPoints += this.points;
+        this.points = 0;
     }
     reset() {
         this.sumPoints += this.points;

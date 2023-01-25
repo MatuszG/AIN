@@ -1,4 +1,4 @@
-import { calcFitness, evolve, findBestPlayer } from "./GALogic";
+import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
 import { readData, createRandomInputData, getRandomInt } from "./utils";
 import { gener_history_freq } from "./utils";
 
@@ -31,7 +31,8 @@ export default function Logic(
   clockSeed,
   seed,
   setGenerations,
-  setSumPoints
+  setMaxSumPoints,
+  setAvgSumPoints
 ) {
   if(clockSeed) {
     globalSeed[0] = -1;
@@ -54,7 +55,7 @@ export default function Logic(
       (playerNumber === 2 && (popSize === 2 || popSize === 3)) 
       // || (playerNumber === 3 && (popSize === 3 || popSize === 4))
     ) {
-      individuals = readData(strategyFromFile);
+      individuals = readData(popSize, prehistoryLength, playerNumber, strategyFromFile);
     } else {
       individuals = createRandomInputData(
         popSize,
@@ -64,9 +65,10 @@ export default function Logic(
         probOfInit
       );
     }
+    
     if (numOfGenerations == 0) return;
     for (let generation = 0; generation <= numOfGenerations; generation++) {
-      //console.log(`Generation: ${generation}`);
+      // console.log(`Generation: ${generation}`);
       standardGame(
         numOfTournaments,
         individuals,
@@ -82,11 +84,16 @@ export default function Logic(
         d4
       );
       calcFitness(individuals, numOfTournaments);
+      const bestPlayer = findBestPlayer(individuals);
+      const avgPlayer = findAveragePlayer(individuals);
+      const max = bestPlayer.fitnessPoints;
+      const avg = avgPlayer.fitnessPoints;
+      // console.log(max)
+      // console.log(avg)
       evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
-      const bestPlayer = findBestPlayer(individuals);
-      const sumPoints = bestPlayer.fitnessPoints;
-      setSumPoints((prev) => [...prev, sumPoints]);
+      setMaxSumPoints((prev) => [...prev, max]);
+      setAvgSumPoints((prev) => [...prev, avg]);
       resetScoresindividuals(individuals);
     }
   }
@@ -156,6 +163,9 @@ function standardGame(
           }
         }
       }
+      individuals.forEach((element) => {
+        element.resetPoints();
+      });
     }
     playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
   }

@@ -7,11 +7,13 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
+  Title,
+  Legend
 } from "chart.js";
 
 import Logic from "../logic/Logic";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Legend);
 
 const HomePage = () => {
   const [popSize, setPopSize] = useState(2);
@@ -42,7 +44,8 @@ const HomePage = () => {
   const [twoPd, setTwoPd] = useState(true);
   const [pd, setPd] = useState(false);
   const [generations, setGenerations] = useState([]);
-  const [sumPoints, setSumPoints] = useState([]);
+  const [sumMaxPoints, setMaxSumPoints] = useState([]);
+  const [sumAvgPoints, setAvgSumPoints] = useState([]);
   const [textDebug, setTextDebug] = useState("");
   const [strategyLength, setStrategyLength] = useState(2);
   const [strategyFromFile, setStrategyFromFile] = useState();
@@ -71,7 +74,6 @@ const HomePage = () => {
     link.click();
     link.parentNode.removeChild(link);
   };
-
   const array = [];
   for (let i = 0; i < 10; i++) {
     array[i] = [];
@@ -79,6 +81,7 @@ const HomePage = () => {
       array[i][j] = null;
     }
   }
+  
 
   useEffect(() => {
     if (!debug) {
@@ -90,6 +93,8 @@ const HomePage = () => {
       setStrategyFromFile(array);
     } else {
       let index;
+      setTwoPd(true);
+      setPd(false);
       index = textDebug.search("pop_size");
       if (index !== -1)
         setPopSize(
@@ -134,14 +139,21 @@ const HomePage = () => {
     }
   }, [debug]);
 
-  console.log(strategyFromFile);
+  // console.log(strategyFromFile);
 
   const data = {
     labels: generations,
     datasets: [
       {
-        data: sumPoints,
+        data: sumMaxPoints,
         borderColor: "red",
+        label: "Best fit",
+        tension: 0.5,
+      },
+      {
+        data: sumAvgPoints,
+        label: "Avg fit",
+        borderColor: "blue",
         tension: 0.5,
       },
     ],
@@ -150,7 +162,17 @@ const HomePage = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: false,
+      legend: {
+        position: "right",
+      },
+      // title: {
+      //   display: true,
+      //   text: "Wykres zależności ",
+      //   font: {
+      //     size: 25,
+      //   },
+      //   color: "white",
+      // }
     },
     scales: {
       x: {
@@ -489,7 +511,8 @@ const HomePage = () => {
               <button
                 className="HomePage-container-start-container-button-btn"
                 onClick={() => {
-                  setSumPoints([]);
+                  setMaxSumPoints([]);
+                  setAvgSumPoints([]);
                   setGenerations([]);
                   Logic(
                     numOfRuns,
@@ -518,7 +541,8 @@ const HomePage = () => {
                     clockSeed,
                     seed,
                     setGenerations,
-                    setSumPoints
+                    setMaxSumPoints,
+                    setAvgSumPoints
                   );
                 }}
               >

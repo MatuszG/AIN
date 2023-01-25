@@ -1,11 +1,28 @@
 import {Individual, randomRange} from './utils'
 
 export function findBestPlayer(individuals) {
-    let fitness = 0;
+    let fitnessPoints = 0;
     let player = individuals[0];
     for(let i = 0; i < individuals.length; i++) {
-        if(fitness < individuals[i].fitness) {
-            fitness = individuals[i].fitness;
+        if(fitnessPoints < individuals[i].fitnessPoints) {
+            fitnessPoints = individuals[i].fitnessPoints;
+            player = individuals[i];
+        }
+    }
+    return player;
+}
+
+export function findAveragePlayer(individuals) {
+    let player = individuals[0];
+    let sumFitnessPoints = 0;
+    for(let i = 0; i < individuals.length; i++) {
+        sumFitnessPoints += individuals[i].fitnessPoints;
+    }
+    let avgFitnessPoints = sumFitnessPoints/individuals.length;
+    let delta = Number.MAX_SAFE_INTEGER;
+    for(let i = 0; i < individuals.length; i++) {
+        if(Math.abs(avgFitnessPoints - individuals[i].fitnessPoints) < delta) {
+            delta = Math.abs(avgFitnessPoints - individuals[i].fitnessPoints);
             player = individuals[i];
         }
     }
@@ -14,19 +31,20 @@ export function findBestPlayer(individuals) {
 
 export function calcFitness(Individuals, numOfTournaments) {
     let sumFitness = 0;
-    let powerValue = 1.2;
+    let powerValue = 2;
     for(let i = 0; i < Individuals.length; i++) {
         // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments), powerValue);
         Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
         Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
-        sumFitness = Individuals[i].fitness;
+        // sumFitness = Individuals[i].fitnessPoints;
+        sumFitness = Individuals[i].fitnessPoints;
     }
     for(let i = 0; i < Individuals.length; i++) {
         if(sumFitness === 0) {
             Individuals[i].fitness = 0;
         }
         else {
-            Individuals[i].fitness = Individuals[i].fitness/sumFitness;
+            Individuals[i].fitness = Individuals[i].fitnessPoints/sumFitness;
         }
     }
 }
@@ -55,7 +73,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     sortIndividuals(selectedIndividuals);
     if(elitist) {
         selectedIndividuals.splice(-1);
-        selectedIndividuals.push(new Individual(individuals[0].prehistory, individuals[0].strategy, individuals[0].fitness));
+        selectedIndividuals.push(new Individual(individuals[0].prehistory.slice(), individuals[0].strategy.slice(), individuals[0].fitnessPoints));
     }
     individuals = selectedIndividuals;
     mutation(individuals, mutationProb);
@@ -90,7 +108,7 @@ function poolSelection(individuals, tournament_size) {
         for(let i = 0; i < individuals.Length; i++) {
             random -= individuals[i].fitness;
             if(random <= 0 && ind.fitness < individuals[i].fitness ) {
-                ind = new Individual(individuals[i].prehistory, individuals[i].strategy, individuals[i].fitness);
+                ind = new Individual(individuals[i].prehistory.slice(), individuals[i].strategy.slice(), individuals[i].fitness);
             } 
         }
     }
