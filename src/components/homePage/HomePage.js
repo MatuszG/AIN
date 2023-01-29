@@ -8,12 +8,20 @@ import {
   LinearScale,
   PointElement,
   Title,
-  Legend
+  Legend,
 } from "chart.js";
+import Strategies from "../../../Strategies.txt";
 
 import Logic from "../logic/Logic";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Legend);
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
+  Legend
+);
 
 const HomePage = () => {
   const [popSize, setPopSize] = useState(2);
@@ -46,28 +54,13 @@ const HomePage = () => {
   const [generations, setGenerations] = useState([]);
   const [sumMaxPoints, setMaxSumPoints] = useState([]);
   const [sumAvgPoints, setAvgSumPoints] = useState([]);
-  const [textDebug, setTextDebug] = useState("");
   const [strategyLength, setStrategyLength] = useState(2);
   const [strategyFromFile, setStrategyFromFile] = useState();
 
-  const showFile = async (e) => {
-    e.preventDefault();
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const text = e.target.result;
-      setTextDebug(text);
-    };
-    reader.readAsText(e.target.files[0]);
-  };
-
   const exportInfo = () => {
     const fileData = JSON.stringify("test");
-    const fileData2 = JSON.stringify("test2");
-    const fileData3 = JSON.stringify("test3");
     const blob = new Blob([fileData], { type: "text/plain" });
-    const blob2 = new Blob([fileData2], { type: "text/plain" });
-    const blob3 = new Blob([fileData3], { type: "text/plain" });
-    const url = URL.createObjectURL(blob, blob2, blob3);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.download = "info.txt";
     link.href = url;
@@ -81,9 +74,8 @@ const HomePage = () => {
       array[i][j] = null;
     }
   }
-  
 
-  useEffect(() => {
+  useEffect(async () => {
     if (!debug) {
       setPopSize(2);
       setPrehistory(3);
@@ -92,6 +84,7 @@ const HomePage = () => {
       setStrategyLength(2);
       setStrategyFromFile(array);
     } else {
+      let textDebug = await fetch(Strategies).then((r) => r.text());
       let index;
       setTwoPd(true);
       setPd(false);
@@ -233,232 +226,244 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-          <div className="HomePage-container-payoff">
-            <p className="HomePage-container-payoff-title">
-              2pPD payoff function
-            </p>
-            <div className="HomePage-container-payoff-settings">
-              <div className="HomePage-container-payoff-settings-container">
-                C C{" "}
+          <div className="display">
+            <div className="HomePage-container-payoff">
+              <p className="HomePage-container-payoff-title">
+                2pPD payoff function
+              </p>
+              <div className="HomePage-container-payoff-settings">
+                <div className="HomePage-container-payoff-settings-container">
+                  C C{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={c1}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setC1(e.target.value) : undefined
+                    }
+                  />{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={c2}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setC2(e.target.value) : undefined
+                    }
+                  />
+                </div>
+                <div className="HomePage-container-payoff-settings-container">
+                  C D{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={c3}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setC3(e.target.value) : undefined
+                    }
+                  />{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={d1}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setD1(e.target.value) : undefined
+                    }
+                  />
+                </div>
+                <div className="HomePage-container-payoff-settings-container">
+                  D C{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={d2}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setD2(e.target.value) : undefined
+                    }
+                  />{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={c4}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setC4(e.target.value) : undefined
+                    }
+                  />
+                </div>
+                <div className="HomePage-container-payoff-settings-container">
+                  D D{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={d3}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setD3(e.target.value) : undefined
+                    }
+                  />{" "}
+                  <input
+                    type="number"
+                    className="HomePage-container-payoff-settings-input"
+                    value={d4}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setD4(e.target.value) : undefined
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="HomePage-container-prob">
+              <div className="HomePage-container-prob-info">
+                <p>prob_of_init_C</p>
                 <input
                   type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={c1}
+                  value={probOfInit}
                   onChange={(e) =>
-                    e.target.value >= 0 ? setC1(e.target.value) : undefined
-                  }
-                />{" "}
-                <input
-                  type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={c2}
-                  onChange={(e) =>
-                    e.target.value >= 0 ? setC2(e.target.value) : undefined
+                    e.target.value >= 0
+                      ? setProbOfInit(e.target.value)
+                      : undefined
                   }
                 />
               </div>
-              <div className="HomePage-container-payoff-settings-container">
-                C D{" "}
+              <div className="HomePage-container-prob-info">
+                <p>num_of_tournaments</p>
                 <input
                   type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={c3}
+                  value={numOfTournaments}
                   onChange={(e) =>
-                    e.target.value >= 0 ? setC3(e.target.value) : undefined
-                  }
-                />{" "}
-                <input
-                  type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={d1}
-                  onChange={(e) =>
-                    e.target.value >= 0 ? setD1(e.target.value) : undefined
+                    e.target.value >= 0
+                      ? setNumOfTournaments(e.target.value)
+                      : undefined
                   }
                 />
               </div>
-              <div className="HomePage-container-payoff-settings-container">
-                D C{" "}
+              <div className="HomePage-container-prob-info">
+                <p>num of opponents {">"}=</p>
                 <input
                   type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={d2}
+                  value={numOfOpponents}
                   onChange={(e) =>
-                    e.target.value >= 0 ? setD2(e.target.value) : undefined
-                  }
-                />{" "}
-                <input
-                  type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={c4}
-                  onChange={(e) =>
-                    e.target.value >= 0 ? setC4(e.target.value) : undefined
+                    e.target.value >= 1
+                      ? setNumOfOpponents(e.target.value)
+                      : undefined
                   }
                 />
               </div>
-              <div className="HomePage-container-payoff-settings-container">
-                D D{" "}
+              <div className="HomePage-container-prob-info">
+                <p>prehistory L</p>
                 <input
                   type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={d3}
+                  value={prehistoryLength}
                   onChange={(e) =>
-                    e.target.value >= 0 ? setD3(e.target.value) : undefined
-                  }
-                />{" "}
-                <input
-                  type="number"
-                  className="HomePage-container-payoff-settings-input"
-                  value={d4}
-                  onChange={(e) =>
-                    e.target.value >= 0 ? setD4(e.target.value) : undefined
+                    e.target.value >= 1
+                      ? setPrehistory(e.target.value)
+                      : undefined
                   }
                 />
-              </div>
-            </div>
-          </div>
-          <div className="HomePage-container-prob">
-            <div className="HomePage-container-prob-info">
-              <p>prob_of_init_C</p>
-              <input
-                type="number"
-                value={probOfInit}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setProbOfInit(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-prob-info">
-              <p>num_of_tournaments</p>
-              <input
-                type="number"
-                value={numOfTournaments}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setNumOfTournaments(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-prob-info">
-              <p>num of opponents {">"}=</p>
-              <input
-                type="number"
-                value={numOfOpponents}
-                onChange={(e) =>
-                  e.target.value >= 1
-                    ? setNumOfOpponents(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-prob-info">
-              <p>prehistory L</p>
-              <input
-                type="number"
-                value={prehistoryLength}
-                onChange={(e) =>
-                  e.target.value >= 1
-                    ? setPrehistory(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-          </div>
-          <div className="HomePage-container-parameters">
-            <p className="HomePage-container-parameters-title">GA Parameters</p>
-            <div className="HomePage-container-parameters-info">
-              <p>pop_size</p>
-              <input
-                type="number"
-                value={popSize}
-                onChange={(e) =>
-                  e.target.value >= 2 ? setPopSize(e.target.value) : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-parameters-info">
-              <p>num_of_generations</p>
-              <input
-                type="number"
-                value={numOfGenerations}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setNumOfGenerations(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-parameters-info">
-              <p>tournament_size</p>
-              <input
-                type="number"
-                value={tournamentSize}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setTournamentSize(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-parameters-info">
-              <p>crossover_prob</p>
-              <input
-                type="number"
-                value={crossoverProb}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setCrossoverProb(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-parameters-info">
-              <p>mutation_prob</p>
-              <input
-                type="number"
-                value={mutationProb}
-                onChange={(e) =>
-                  e.target.value >= 0
-                    ? setMutationProb(e.target.value)
-                    : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-parameters-info">
-              <div className="HomePage-container-parameters-info-checkbox">
-                <input
-                  type="checkbox"
-                  id="elist"
-                  checked={elistStrategy}
-                  onChange={() => setElistStrategy(!elistStrategy)}
-                />
-                <label htmlFor="elist">elist_strategy</label>
               </div>
             </div>
           </div>
-          <div className="HomePage-container-start">
-            <div className="HomePage-container-start-container">
-              <p>num_of_runs</p>
-              <input
-                type="number"
-                value={numOfRuns}
-                onChange={(e) =>
-                  e.target.value >= 0 ? setNumOfRuns(e.target.value) : undefined
-                }
-              />
-            </div>
-            <div className="HomePage-container-start-container">
-              <div className="HomePage-container-start-container-element">
-                <p>seed</p>
+          <div className="display">
+            <div className="HomePage-container-parameters">
+              <p className="HomePage-container-parameters-title">
+                GA Parameters
+              </p>
+              <div className="HomePage-container-parameters-info">
+                <p>pop_size</p>
                 <input
                   type="number"
-                  value={seed}
+                  value={popSize}
                   onChange={(e) =>
-                    e.target.value >= 0 ? setSeed(e.target.value) : undefined
+                    e.target.value >= 2 ? setPopSize(e.target.value) : undefined
                   }
                 />
+              </div>
+              <div className="HomePage-container-parameters-info">
+                <p>num_of_generations</p>
+                <input
+                  type="number"
+                  value={numOfGenerations}
+                  onChange={(e) =>
+                    e.target.value >= 0
+                      ? setNumOfGenerations(e.target.value)
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="HomePage-container-parameters-info">
+                <p>tournament_size</p>
+                <input
+                  type="number"
+                  value={tournamentSize}
+                  onChange={(e) =>
+                    e.target.value >= 0
+                      ? setTournamentSize(e.target.value)
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="HomePage-container-parameters-info">
+                <p>crossover_prob</p>
+                <input
+                  type="number"
+                  value={crossoverProb}
+                  onChange={(e) =>
+                    e.target.value >= 0
+                      ? setCrossoverProb(e.target.value)
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="HomePage-container-parameters-info">
+                <p>mutation_prob</p>
+                <input
+                  type="number"
+                  value={mutationProb}
+                  onChange={(e) =>
+                    e.target.value >= 0
+                      ? setMutationProb(e.target.value)
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="HomePage-container-parameters-info">
+                <div className="HomePage-container-parameters-info-checkbox">
+                  <input
+                    type="checkbox"
+                    id="elist"
+                    checked={elistStrategy}
+                    onChange={() => setElistStrategy(!elistStrategy)}
+                  />
+                  <label htmlFor="elist">elist_strategy</label>
+                </div>
+              </div>
+            </div>
+            <div className="HomePage-container-start">
+              <div className="HomePage-container-start-container">
+                <div className="HomePage-container-start-container-element">
+                  <p>num_of_runs</p>
+                  <input
+                    type="number"
+                    className="HomePage-container-start-container-text"
+                    value={numOfRuns}
+                    onChange={(e) =>
+                      e.target.value >= 0
+                        ? setNumOfRuns(e.target.value)
+                        : undefined
+                    }
+                  />
+                </div>
+              </div>
+              <div className="HomePage-container-start-container">
+                <div className="HomePage-container-start-container-element">
+                  <p>seed</p>
+                  <input
+                    type="number"
+                    className="HomePage-container-start-container-text"
+                    value={seed}
+                    onChange={(e) =>
+                      e.target.value >= 0 ? setSeed(e.target.value) : undefined
+                    }
+                  />
+                </div>
               </div>
               <div>
                 <input
@@ -469,91 +474,90 @@ const HomePage = () => {
                 />
                 <label htmlFor="seed"> clock_seed</label>
               </div>
-            </div>
-            <div className="HomePage-container-start-container">
-              <div className="HomePage-container-start-container-element">
-                <p>freg_gen...start</p>
-                <input
-                  type="number"
-                  className="HomePage-container-start-container-text"
-                  value={fregGenStart}
-                  onChange={(e) =>
-                    e.target.value >= 0
-                      ? setFregGenStart(e.target.value)
-                      : undefined
-                  }
-                />
+              <div className="HomePage-container-start-container">
+                <div className="HomePage-container-start-container-element">
+                  <p>freg_gen...start</p>
+                  <input
+                    type="number"
+                    className="HomePage-container-start-container-text"
+                    value={fregGenStart}
+                    onChange={(e) =>
+                      e.target.value >= 0
+                        ? setFregGenStart(e.target.value)
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
-              <div className="HomePage-container-start-container-element">
-                <p>delta_freg</p>
-                <input
-                  type="number"
-                  className="HomePage-container-start-container-text"
-                  value={deltaFreg}
-                  onChange={(e) =>
-                    e.target.value >= 0
-                      ? setDeltaFreg(e.target.value)
-                      : undefined
-                  }
-                />
+              <div className="HomePage-container-start-container">
+                <div className="HomePage-container-start-container-element">
+                  <p>delta_freg</p>
+                  <input
+                    type="number"
+                    className="HomePage-container-start-container-text"
+                    value={deltaFreg}
+                    onChange={(e) =>
+                      e.target.value >= 0
+                        ? setDeltaFreg(e.target.value)
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
-            </div>
-            <div className="HomePage-container-start-container-button">
-              <div className="HomePage-container-start-container-checkbox">
-                <input
-                  type="checkbox"
-                  id="debug"
-                  checked={debug}
-                  onChange={() => setDebug(!debug)}
-                />
-                <label htmlFor="debug"> debug</label>
+              <div className="HomePage-container-start-container-button">
+                <div className="HomePage-container-start-container-checkbox">
+                  <input
+                    type="checkbox"
+                    id="debug"
+                    checked={debug}
+                    onChange={() => setDebug(!debug)}
+                  />
+                  <label htmlFor="debug"> debug</label>
+                </div>
+                <button
+                  className="HomePage-container-start-container-button-btn"
+                  onClick={() => {
+                    setMaxSumPoints([]);
+                    setAvgSumPoints([]);
+                    setGenerations([]);
+                    Logic(
+                      numOfRuns,
+                      numOfGenerations,
+                      numOfTournaments,
+                      numOfOpponents,
+                      popSize,
+                      prehistoryLength,
+                      strategyFromFile,
+                      n,
+                      twoPd,
+                      c1,
+                      c2,
+                      c3,
+                      c4,
+                      d1,
+                      d2,
+                      d3,
+                      d4,
+                      elistStrategy,
+                      mutationProb,
+                      crossoverProb,
+                      tournamentSize,
+                      probOfInit,
+                      debug,
+                      clockSeed,
+                      seed,
+                      setGenerations,
+                      setMaxSumPoints,
+                      setAvgSumPoints
+                    );
+                  }}
+                >
+                  start
+                </button>
               </div>
-              <button
-                className="HomePage-container-start-container-button-btn"
-                onClick={() => {
-                  setMaxSumPoints([]);
-                  setAvgSumPoints([]);
-                  setGenerations([]);
-                  Logic(
-                    numOfRuns,
-                    numOfGenerations,
-                    numOfTournaments,
-                    numOfOpponents,
-                    popSize,
-                    prehistoryLength,
-                    strategyFromFile,
-                    n,
-                    twoPd,
-                    c1,
-                    c2,
-                    c3,
-                    c4,
-                    d1,
-                    d2,
-                    d3,
-                    d4,
-                    elistStrategy,
-                    mutationProb,
-                    crossoverProb,
-                    tournamentSize,
-                    probOfInit,
-                    debug,
-                    clockSeed,
-                    seed,
-                    setGenerations,
-                    setMaxSumPoints,
-                    setAvgSumPoints
-                  );
-                }}
-              >
-                start
-              </button>
-            </div>
-            <div className="HomePage-container-start-container-file">
-              <input type="file" onChange={(e) => showFile(e)} accept=".txt" />
-            </div>
-            <div className="HomePage-container-start-container-file">
-              <button onClick={exportInfo}>Pobierz</button>
+              <div className="HomePage-container-start-container-file">
+                <button onClick={exportInfo}>Pobierz</button>
+              </div>
             </div>
           </div>
         </div>
