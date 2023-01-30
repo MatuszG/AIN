@@ -9,6 +9,7 @@ export function findBestPlayer(individuals) {
             player = individuals[i];
         }
     }
+    // console.log("max:", player.fitnessPoints)
     return player;
 }
 
@@ -26,6 +27,7 @@ export function findAveragePlayer(individuals) {
             player = individuals[i];
         }
     }
+    // console.log("avg:", player.fitnessPoints)
     return player;
 }
 
@@ -47,6 +49,7 @@ export function calcFitness(Individuals, numOfTournaments) {
             Individuals[i].fitness = Individuals[i].fitnessPoints/sumFitness;
         }
     }
+    // console.log(Individuals);
 }
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
@@ -56,7 +59,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     while(selectedIndividuals.length < individuals.length) {
         let range = randomRange(strategyLength);
         let firstIndividual = poolSelection(individuals, tournament_size);
-        if((range/strategyLength) <= crossoverProb / 100) {
+        if((range/strategyLength) <= crossoverProb ) {
             let secondIndividual = poolSelection(individuals, tournament_size);
             if(selectedIndividuals.length === individuals.length - 1){
                 selectedIndividuals.push(crossover(firstIndividual, secondIndividual, range));
@@ -89,7 +92,7 @@ function crossover(firstIndividual, secondIndividual, range) {
 function mutation(individuals, mutationProb) {
     for(let i = 0; i < individuals.length; i++) {
         for(let j = 0; j < individuals[i].strategy.length; j++) {
-            if(Math.random() <= mutationProb/100) {
+            if(Math.random() <= mutationProb) {
                 individuals[i].strategy[j] = mutateBit(individuals[i].strategy[j]);
             }
         }

@@ -24,19 +24,19 @@ ChartJS.register(
 );
 
 const HomePage = () => {
-  const [popSize, setPopSize] = useState(2);
-  const [numOfGenerations, setNumOfGenerations] = useState(1);
-  const [tournamentSize, setTournamentSize] = useState(1);
-  const [crossoverProb, setCrossoverProb] = useState(35);
-  const [mutationProb, setMutationProb] = useState(3);
+  const [popSize, setPopSize] = useState(100);
+  const [numOfGenerations, setNumOfGenerations] = useState(200);
+  const [tournamentSize, setTournamentSize] = useState(3);
+  const [crossoverProb, setCrossoverProb] = useState(0.9);
+  const [mutationProb, setMutationProb] = useState(0.003);
   const [numOfRuns, setNumOfRuns] = useState(1);
   const [seed, setSeed] = useState(0);
-  const [fregGenStart, setFregGenStart] = useState(0);
-  const [deltaFreg, setDeltaFreg] = useState(0);
-  const [n, setN] = useState(3);
-  const [probOfInit, setProbOfInit] = useState(50);
-  const [numOfTournaments, setNumOfTournaments] = useState(1);
-  const [numOfOpponents, setNumOfOpponents] = useState(1);
+  const [fregGenStart, setFregGenStart] = useState(30);
+  const [deltaFreg, setDeltaFreg] = useState(10);
+  const [n, setN] = useState(4);
+  const [probOfInit, setProbOfInit] = useState(0.5);
+  const [numOfTournaments, setNumOfTournaments] = useState(151);
+  const [numOfOpponents, setNumOfOpponents] = useState(10);
   const [prehistoryLength, setPrehistory] = useState(3);
   const [c1, setC1] = useState(30);
   const [c2, setC2] = useState(30);
@@ -47,7 +47,7 @@ const HomePage = () => {
   const [d3, setD3] = useState(10);
   const [d4, setD4] = useState(10);
   const [elistStrategy, setElistStrategy] = useState(false);
-  const [clockSeed, setClockSeed] = useState(false);
+  const [clockSeed, setClockSeed] = useState(true);
   const [debug, setDebug] = useState(false);
   const [twoPd, setTwoPd] = useState(true);
   const [pd, setPd] = useState(false);
@@ -77,10 +77,10 @@ const HomePage = () => {
 
   useEffect(async () => {
     if (!debug) {
-      setPopSize(2);
+      setPopSize(100);
       setPrehistory(3);
-      setNumOfTournaments(1);
-      setNumOfOpponents(1);
+      setNumOfTournaments(151);
+      setNumOfOpponents(10);
       setStrategyLength(2);
       setStrategyFromFile(array);
     } else {
@@ -315,6 +315,7 @@ const HomePage = () => {
                 <p>prob_of_init_C</p>
                 <input
                   type="number"
+                  step="0.01"
                   value={probOfInit}
                   onChange={(e) =>
                     e.target.value >= 0
@@ -404,6 +405,7 @@ const HomePage = () => {
                 <p>crossover_prob</p>
                 <input
                   type="number"
+                  step="0.01"
                   value={crossoverProb}
                   onChange={(e) =>
                     e.target.value >= 0

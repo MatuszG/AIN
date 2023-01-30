@@ -2,8 +2,6 @@ import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogi
 import { readData, createRandomInputData, getRandomInt, setSeed, setStart } from "./utils";
 import { gener_history_freq } from "./utils";
 
-export const globalSeed = [-1];
-
 export default function Logic(
   numOfRuns,
   numOfGenerations,
@@ -34,28 +32,13 @@ export default function Logic(
   setMaxSumPoints,
   setAvgSumPoints
 ) {
+  setSeed(clockSeed, seed);
+  let playerNumber = n;
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
-  setSeed(clockSeed);
-  let playerNumber = setStart(twoPd, n, strategyLength);
+  playerNumber = setStart(twoPd, n, strategyLength);
   let runs = 0;
+  let individuals = createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit);
   while (runs++ < numOfRuns) {
-    let individuals;
-    if ( debug &&
-      (playerNumber === 2 && (popSize === 2 || popSize === 3)) 
-      // || (playerNumber === 3 && (popSize === 3 || popSize === 4))
-    ) {
-      individuals = readData(popSize, prehistoryLength, playerNumber, strategyFromFile);
-    } else {
-      individuals = createRandomInputData(
-        popSize,
-        prehistoryLength,
-        playerNumber,
-        strategyLength,
-        probOfInit
-      );
-    }
-    
-    if (numOfGenerations == 0) return;
     for (let generation = 0; generation <= numOfGenerations; generation++) {
       // console.log(`Generation: ${generation}`);
       standardGame(
@@ -164,7 +147,7 @@ function standardGame(
 function findPlayers(individuals, playerNumber, numOfOpponents) {
   let idPlayers = [];
   for (let i = 0; i < individuals.length; i++) {
-    if (individuals[i].playedGames < numOfOpponents) {
+    if (individuals[i].playedGames <= numOfOpponents) {
       idPlayers.push(i);
       for (let j = 0; j < playerNumber - 1; j++) {
         let randomId;
@@ -191,5 +174,24 @@ function resetScoresindividuals(Individuals) {
   Individuals.forEach((element) => {
     element.hardReset();
   });
+}
+
+function createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit) {
+  let individuals;
+  if ( debug &&
+    (playerNumber === 2 && (popSize === 2 || popSize === 3)) 
+    // || (playerNumber === 3 && (popSize === 3 || popSize === 4))
+  ) {
+    individuals = readData(popSize, prehistoryLength, playerNumber, strategyFromFile);
+  } else {
+    individuals = createRandomInputData(
+      popSize,
+      prehistoryLength,
+      playerNumber,
+      strategyLength,
+      probOfInit
+    );
+  }
+  return individuals;
 }
 

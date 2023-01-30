@@ -1,4 +1,5 @@
 export const gener_history_freq = [];
+export const globalSeed = [-1];
 
 export function getBinary(probOfInit) {
     if(Math.random() < probOfInit) return 1;
@@ -50,16 +51,17 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
 export function createRandomInputData(popSize, prehistoryLength, playerNumber, strategyLength, probOfInit) {
     let individuals = [];
     let prehistory = [];
-    for(let i = 0; i < prehistoryLength*playerNumber; i++) {
-        prehistory.push(getBinary(probOfInit/100));
+    for(let i = 0; i < prehistoryLength * playerNumber; i++) {
+        prehistory.push(getBinary(probOfInit));
     }
     for(let i = 0; i < popSize; i++) {
         let strategy = [];
         for(let i = 0; i < strategyLength; i++) {
-            strategy.push(getBinary(probOfInit/100));
+            strategy.push(getBinary(probOfInit));
         }
         individuals.push(new Individual(prehistory, strategy, 0));
     }
+    // console.log(strategyLength);
     return individuals;
 }
 
@@ -109,7 +111,7 @@ export class Individual {
     }
 }
 
-export function setSeed(clockSeed){
+export function setSeed(clockSeed, seed){
     if(clockSeed) {
         globalSeed[0] = -1;
     }
