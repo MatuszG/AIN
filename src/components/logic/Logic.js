@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt } from "./utils";
+import { readData, createRandomInputData, getRandomInt, setSeed, setStart } from "./utils";
 import { gener_history_freq } from "./utils";
 
 export const globalSeed = [-1];
@@ -34,21 +34,10 @@ export default function Logic(
   setMaxSumPoints,
   setAvgSumPoints
 ) {
-  if(clockSeed) {
-    globalSeed[0] = -1;
-  }
-  else {
-    globalSeed[0] = seed;
-  }
-  let runs = 0;
-  let playerNumber = n;
-  if (twoPd) {
-    playerNumber = 2;
-  }
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
-  for(let i = 0; i < strategyLength; i++) {
-    gener_history_freq.push(0);
-  }
+  setSeed(clockSeed);
+  let playerNumber = setStart(twoPd, n, strategyLength);
+  let runs = 0;
   while (runs++ < numOfRuns) {
     let individuals;
     if ( debug &&
@@ -203,3 +192,4 @@ function resetScoresindividuals(Individuals) {
     element.hardReset();
   });
 }
+

@@ -108,3 +108,28 @@ export class Individual {
         console.log(`points: ${this.points}`);
     }
 }
+
+export function setSeed(clockSeed){
+    if(clockSeed) {
+        globalSeed[0] = -1;
+    }
+    else {
+        globalSeed[0] = seed;
+    }
+}
+
+export function setStart(twoPd, n, strategyLength) {
+    let playerNumber = n;
+    if (twoPd) {
+        playerNumber = 2;
+    }
+    if(gener_history_freq.length === 0) {
+        for(let i = 0; i < strategyLength; i++) {
+            gener_history_freq.push(0);
+        }
+    }
+    for(let i = 0; i < strategyLength; i++) {
+        gener_history_freq[i] = 0;
+    }
+    return playerNumber;
+}
