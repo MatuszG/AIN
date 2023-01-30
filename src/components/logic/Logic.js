@@ -46,8 +46,13 @@ export default function Logic(
     playerNumber = 2;
   }
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
+  if(gener_history_freq.length === 0) {
+    for(let i = 0; i < strategyLength; i++) {
+      gener_history_freq.push(0);
+    }
+  }
   for(let i = 0; i < strategyLength; i++) {
-    gener_history_freq.push(0);
+    gener_history_freq[i] = 0;
   }
   while (runs++ < numOfRuns) {
     let individuals;
@@ -65,9 +70,8 @@ export default function Logic(
         probOfInit
       );
     }
-    
     if (numOfGenerations == 0) return;
-    for (let generation = 0; generation <= numOfGenerations; generation++) {
+    for (let generation = 0; generation < numOfGenerations; generation++) {
       // console.log(`Generation: ${generation}`);
       standardGame(
         numOfTournaments,
@@ -83,18 +87,16 @@ export default function Logic(
         d3,
         d4
       );
-      calcFitness(individuals, numOfTournaments);
-      const bestPlayer = findBestPlayer(individuals);
-      const avgPlayer = findAveragePlayer(individuals);
-      const max = bestPlayer.fitnessPoints;
-      const avg = avgPlayer.fitnessPoints;
-      // console.log(max)
-      // console.log(avg)
-      evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
-      setGenerations((prev) => [...prev, generation]);
-      setMaxSumPoints((prev) => [...prev, max]);
-      setAvgSumPoints((prev) => [...prev, avg]);
-      resetScoresindividuals(individuals);
+      // calcFitness(individuals, numOfTournaments);
+      // const bestPlayer = findBestPlayer(individuals);
+      // const avgPlayer = findAveragePlayer(individuals);
+      // const max = bestPlayer.fitnessPoints;
+      // const avg = avgPlayer.fitnessPoints;
+      // evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
+      // setGenerations((prev) => [...prev, generation]);
+      // setMaxSumPoints((prev) => [...prev, max]);
+      // setAvgSumPoints((prev) => [...prev, avg]);
+      // resetScoresindividuals(individuals);
     }
   }
 }
@@ -120,12 +122,12 @@ function standardGame(
   for (let j = 0; j < playersIds.length; j++) {
     individuals[playersIds[j]].reset();
   }
-  while (playersIds.length) {
+  while (playersIds.length > 0) {
     for (let i = 0; i < numOfTournaments; i++) {
+      console.log(`Torunament: ${i}`);
       let playersDecision = [];
       for (let j = 0; j < playersIds.length; j++) {
         playersDecision.push(individuals[playersIds[j]].calculate());
-        individuals[playersIds[j]].playedGames++;
       }
       for (let j = 0; j < playersDecision.length; j++) {
         playerOutputs.push(playersDecision[j]);
@@ -163,9 +165,16 @@ function standardGame(
           }
         }
       }
+      console.log("player 1 points", individuals[0].points);
+      console.log("player 2 points", individuals[1].points);
+      console.log("prehistory");
+      console.log(playerOutputs.slice())
       individuals.forEach((element) => {
         element.resetPoints();
       });
+      console.log("player 1 sum points", individuals[0].sumPoints);
+      console.log("player 2 sum points", individuals[1].sumPoints);
+      console.log(gener_history_freq);
     }
     playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
   }

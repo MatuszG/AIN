@@ -15,8 +15,13 @@ export function randomRange(strategyLength) {
     return Math.round(Math.random() * (strategyLength - 1));
 }
 
-export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile) {
+export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile2) {
     let individuals;
+    let strategyFromFile = [
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ,0 ,1 ,0 ,1, 0, 1, 0 ,1, 0 ,1 ,0 ,1 ,0 ,1, null],
+        [0, 0, 0 ,0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, null],
+        [0, 1, 1, 0, 0, 0, null]
+    ]
     if(strategyFromFile === []) {
         individuals = createRandomInputData(
           popSize,
@@ -37,8 +42,8 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
         for(let i = 0; i < popSize; i++) {
             let strategy = [];
             let j = 0;
-            while(strategyFromFile[popSize][j] !== null) {
-                strategy.push(strategyFromFile[popSize][j]);
+            while(strategyFromFile[i][j] !== null) {
+                strategy.push(strategyFromFile[i][j]);
                 j++;
             }
             individuals.push(new Individual(prehistory, strategy, 0));
@@ -83,8 +88,11 @@ export class Individual {
         // this.prehistory.slice().forEach(el => {
         //     sumOfPrehistory += String(el);
         // });
+        this.playedGames++;
         let strategyId = parseInt(sumOfPrehistory, 2);
+        console.log("strategyID", strategyId);
         this.calculates++;
+        console.log("strategyValue", this.strategy[strategyId]);
         gener_history_freq[strategyId]++;
         return this.strategy[strategyId];
     }
