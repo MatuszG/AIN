@@ -88,8 +88,6 @@ export default function Logic(
       const avgPlayer = findAveragePlayer(individuals);
       const max = bestPlayer.fitnessPoints;
       const avg = avgPlayer.fitnessPoints;
-      // console.log(max)
-      // console.log(avg)
       evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
       setMaxSumPoints((prev) => [...prev, max]);
@@ -120,8 +118,8 @@ function standardGame(
   for (let j = 0; j < playersIds.length; j++) {
     individuals[playersIds[j]].reset();
   }
-  while (playersIds.length) {
-    for (let i = 0; i < numOfTournaments; i++) {
+  while (playersIds.length > 0) {
+    for (let i = 0; i <= numOfTournaments; i++) {
       let playersDecision = [];
       for (let j = 0; j < playersIds.length; j++) {
         playersDecision.push(individuals[playersIds[j]].calculate());

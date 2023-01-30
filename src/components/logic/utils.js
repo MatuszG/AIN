@@ -80,9 +80,6 @@ export class Individual {
         this.prehistory.slice().reverse().forEach(el => {
             sumOfPrehistory += String(el);
         });
-        // this.prehistory.slice().forEach(el => {
-        //     sumOfPrehistory += String(el);
-        // });
         let strategyId = parseInt(sumOfPrehistory, 2);
         this.calculates++;
         gener_history_freq[strategyId]++;
