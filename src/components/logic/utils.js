@@ -80,14 +80,9 @@ export class Individual {
         this.fitnessPoints = 0;
         this.calculates = 0;
     }
-    calculate() {
-        let sumOfPrehistory = '';
-        this.prehistory.slice().reverse().forEach(el => {
-            sumOfPrehistory += String(el);
-        });
-        // this.prehistory.slice().forEach(el => {
-        //     sumOfPrehistory += String(el);
-        // });
+    calculate(id, playerNumber) {
+        let sumOfPrehistory = getPrehistory(id, playerNumber, this.prehistory);
+        console.log('prehistory:', id, sumOfPrehistory);
         this.playedGames++;
         let strategyId = parseInt(sumOfPrehistory, 2);
         console.log("strategyID", strategyId);
@@ -118,4 +113,19 @@ export class Individual {
         console.log(`strategy: ${this.strategy}`);
         console.log(`points: ${this.points}`);
     }
+}
+
+function getPrehistory(id, playerNumber, prehistory) {
+    let sumOfPrehistory = '';
+    let preh = prehistory.slice();
+    let colLength = preh.length / playerNumber;
+    for(let i = 0; i < colLength; i++) {
+        sumOfPrehistory += preh[id + i*playerNumber];
+        for(let j = 0; j < playerNumber; j++) {
+            if(j != id) {
+                sumOfPrehistory += preh[j + i*playerNumber];
+            }
+        }
+    }
+    return sumOfPrehistory;
 }

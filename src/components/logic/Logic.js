@@ -127,7 +127,7 @@ function standardGame(
       console.log(`Torunament: ${i}`);
       let playersDecision = [];
       for (let j = 0; j < playersIds.length; j++) {
-        playersDecision.push(individuals[playersIds[j]].calculate());
+        playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
       }
       for (let j = 0; j < playersDecision.length; j++) {
         playerOutputs.push(playersDecision[j]);
