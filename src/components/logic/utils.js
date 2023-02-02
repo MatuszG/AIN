@@ -122,7 +122,6 @@ function getPrehistory(id, playerNumber) {
     let prehistory = '';
     let sumOfPrehistory = ''
     let colLength = globalPreh.length / playerNumber;
-    // console.log(globalPreh);
     for(let i = 0; i < colLength; i++) {
         prehistory += globalPreh[id + i*playerNumber];
         sumOfPrehistory = 0;
@@ -137,7 +136,6 @@ function getPrehistory(id, playerNumber) {
         }
         prehistory += sumOfPrehistory;
     }
-    console.log(prehistory);
     return prehistory;
 }
 

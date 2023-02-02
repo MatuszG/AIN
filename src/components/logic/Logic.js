@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt } from "./utils";
+import { readData, createRandomInputData, getRandomInt, globalPreh } from "./utils";
 import { gener_history_freq } from "./utils";
 
 export const globalSeed = [-1];
@@ -122,10 +122,10 @@ function standardGame(
   }
   for (let i = 0; i < numOfTournaments; i++) {
     console.log(`Torunament: ${i}`);
+    console.log("prehistory", playerOutputs.slice());
     let playersDecision = [];
     playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
     for (let j = 0; j < playersIds.length; j++) {
-      console.log(playersIds);
       playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
       individuals[playersIds[j]].playedGames++;
     }
@@ -171,8 +171,6 @@ function standardGame(
     }
     console.log("player 1 points", individuals[0].points);
     console.log("player 2 points", individuals[1].points);
-    console.log("prehistory");
-    console.log(playerOutputs.slice())
     individuals.forEach((element) => {
       element.resetPoints();
     });
@@ -285,9 +283,9 @@ function findPlayers(individuals, playerNumber, numOfOpponents) {
   return idPlayers;
 }
 
-function countCooperators(prehistory) {
+function countCooperators(prehistory, playerNumber) {
   let cooperators = 0;
-  for (let i = 0; i < prehistory.length; i++) {
+  for (let i = 0; i < playerNumber; i++) {
     if (prehistory[i] === 1) cooperators++;
   }
   return cooperators;
