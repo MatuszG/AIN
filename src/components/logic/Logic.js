@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt, setSeed, setStart } from "./utils";
+import { readData, createRandomInputData, getRandomInt, setSeed, setStart, globalPreh } from "./utils";
 import { gener_history_freq } from "./utils";
 
 export default function Logic(
@@ -40,7 +40,7 @@ export default function Logic(
   let individuals = createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit);
   while (runs++ < numOfRuns) {
     for (let generation = 0; generation <= numOfGenerations; generation++) {
-      // console.log(`Generation: ${generation}`);
+      console.log(`Generation: ${generation}`);
       standardGame(
         numOfTournaments,
         individuals,
@@ -55,6 +55,7 @@ export default function Logic(
         d3,
         d4
       );
+      console.log('test2');
       calcFitness(individuals, numOfTournaments);
       const bestPlayer = findBestPlayer(individuals);
       const avgPlayer = findAveragePlayer(individuals);
@@ -83,88 +84,103 @@ function standardGame(
   d3,
   d4
 ) {
-  let prehistory = individuals[0].prehistory;
-  let playerOutputs = prehistory;
-  let playersIds;
-  playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
+  let playerOutputs = globalPreh.slice();
+  let playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
   for (let j = 0; j < playersIds.length; j++) {
     individuals[playersIds[j]].reset();
   }
-  while (playersIds.length > 0) {
-    for (let i = 0; i <= numOfTournaments; i++) {
-      let playersDecision = [];
-      for (let j = 0; j < playersIds.length; j++) {
-        playersDecision.push(individuals[playersIds[j]].calculate());
-        individuals[playersIds[j]].playedGames++;
-      }
-      for (let j = 0; j < playersDecision.length; j++) {
-        playerOutputs.push(playersDecision[j]);
-      }
-      playerOutputs.splice(0, playerNumber);
-      if (playerNumber === 2) {
-        if (
-          playerOutputs[prehistory.length - 1] ===
-          playerOutputs[prehistory.length - 2]
-        ) {
-          if (playerOutputs[prehistory.length - 1] === 1) {
-            individuals[playersIds[0]].points += c1;
-            individuals[playersIds[1]].points += c2;
-          } else {
-            individuals[playersIds[0]].points += d3;
-            individuals[playersIds[1]].points += d4;
-          }
+  for (let i = 0; i < numOfTournaments; i++) {
+    let playersDecision = [];
+    playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
+    for (let j = 0; j < playersIds.length; j++) {
+      console.log(playersIds);
+      playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
+      individuals[playersIds[j]].playedGames++;
+    }
+    for (let j = 0; j < playersDecision.length; j++) {
+      playerOutputs.unshift(playersDecision[j]);
+    }
+    playerOutputs.splice(playerOutputs.length - 2, 2);
+    let slicedPreh = playerOutputs.slice();
+    for(let i = 0; i < globalPreh.length; i++) {
+      globalPreh[i] = slicedPreh[i];
+    }
+    console.log('test1');
+    if (playerNumber === 2) {
+      if (
+        playerOutputs[0] ===
+        playerOutputs[1]
+      ) {
+        if (playerOutputs[playerOutputs.length - 1] === 1) {
+          individuals[playersIds[0]].points += c1;
+          individuals[playersIds[1]].points += c2;
         } else {
-          if (playerOutputs[prehistory.length - 1] === 1) {
-            individuals[playersIds[0]].points += d1;
-            individuals[playersIds[1]].points += c3;
-          } else {
-            individuals[playersIds[0]].points += c4;
-            individuals[playersIds[1]].points += d2;
-          }
+          individuals[playersIds[0]].points += d3;
+          individuals[playersIds[1]].points += d4;
         }
       } else {
-        let preh = playerOutputs.slice().reverse();
-        let cooperators = countCooperators(preh);
-        for (let j = 0; j < playersIds.length; j++) {
-          if (preh[j] === 1) {
-            individuals[playersIds[j]].points += 2 * (cooperators - 1);
-          } else {
-            individuals[playersIds[j]].points += 2 * (cooperators - 1) + 1;
-          }
+        if (playerOutputs[0] === 1) {
+          individuals[playersIds[0]].points += d1;
+          individuals[playersIds[1]].points += c3;
+        } else {
+          individuals[playersIds[0]].points += c4;
+          individuals[playersIds[1]].points += d2;
         }
       }
-      individuals.forEach((element) => {
-        element.resetPoints();
-      });
+    } else {
+      let preh = playerOutputs.slice();
+      let cooperators = countCooperators(preh, playersIds.length);
+      for (let j = 0; j < playersIds.length; j++) {
+        if (preh[j] === 1) {
+          individuals[playersIds[j]].points += 2 * (cooperators - 1);
+        } else {
+          individuals[playersIds[j]].points += 2 * (cooperators - 1) + 1;
+        }
+      }
     }
-    playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
+    individuals.forEach((element) => {
+      element.resetPoints();
+    });
   }
-  individuals.forEach((element) => {
-    element.reset();
-  });
+  // individuals.forEach((element) => {
+  //   element.reset();
+  // });
 }
 
 function findPlayers(individuals, playerNumber, numOfOpponents) {
   let idPlayers = [];
+  sortIndividuals(individuals);
   for (let i = 0; i < individuals.length; i++) {
-    if (individuals[i].playedGames <= numOfOpponents) {
+    if (individuals[i].playedGames <= numOfOpponents && idPlayers.length < playerNumber) {
       idPlayers.push(i);
-      for (let j = 0; j < playerNumber - 1; j++) {
-        let randomId;
-        do {
-          randomId = getRandomInt(0, individuals.length);
-        } while (randomId === i);
-        idPlayers.push(randomId);
-      }
-      return idPlayers;
     }
   }
+  while (idPlayers.length < playerNumber) {
+    let randomId;
+    do {
+      randomId = getRandomInt(0, individuals.length);
+    } while (idPlayers.includes(randomId));
+    idPlayers.push(randomId);
+  }
+
   return idPlayers;
 }
 
-function countCooperators(prehistory) {
+function sortIndividuals(individuals) {
+  individuals.sort(function compare(a, b) {
+      if(a.calculates > b.calculates) {
+          return 1;
+      }
+      else if(a.calculates < b.calculates) {
+          return -1;
+      }
+      return 0;
+  });
+}
+
+function countCooperators(prehistory, playerNumber) {
   let cooperators = 0;
-  for (let i = 0; i < prehistory.length; i++) {
+  for (let i = 0; i < playerNumber; i++) {
     if (prehistory[i] === 1) cooperators++;
   }
   return cooperators;

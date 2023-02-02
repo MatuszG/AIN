@@ -1,5 +1,6 @@
 export const gener_history_freq = [];
 export const globalSeed = [-1];
+export let globalPreh = [];
 
 export function getBinary(probOfInit) {
     if(Math.random() < probOfInit) return 1;
@@ -28,12 +29,13 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
         );
     }
     else {
-        let prehistory = [];
+        let preh = [];
         let j = 0;
         while(strategyFromFile[popSize][j] !== null) {
-            prehistory.push(strategyFromFile[popSize][j]);
+            preh.push(strategyFromFile[popSize][j]);
             j++;
         }
+        globalPreh = preh.slice();
         individuals = [];
         for(let i = 0; i < popSize; i++) {
             let strategy = [];
@@ -42,7 +44,7 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
                 strategy.push(strategyFromFile[popSize][j]);
                 j++;
             }
-            individuals.push(new Individual(prehistory, strategy, 0));
+            individuals.push(new Individual(preh, strategy, 0));
         }
     }
     return individuals;
@@ -61,6 +63,7 @@ export function createRandomInputData(popSize, prehistoryLength, playerNumber, s
         }
         individuals.push(new Individual(prehistory, strategy, 0));
     }
+    globalPreh = prehistory.slice();
     // console.log(strategyLength);
     return individuals;
 }
@@ -77,12 +80,10 @@ export class Individual {
         this.fitnessPoints = 0;
         this.calculates = 0;
     }
-    calculate() {
-        let sumOfPrehistory = '';
-        this.prehistory.slice().reverse().forEach(el => {
-            sumOfPrehistory += String(el);
-        });
+    calculate(id, playerNumber) {
+        let sumOfPrehistory = getPrehistory(id, playerNumber);
         let strategyId = parseInt(sumOfPrehistory, 2);
+        console.log(strategyId);
         this.calculates++;
         gener_history_freq[strategyId]++;
         return this.strategy[strategyId];
@@ -135,3 +136,41 @@ export function setStart(twoPd, n, strategyLength) {
     }
     return playerNumber;
 }
+
+function getPrehistory(id, playerNumber) {
+    let prehistory = '';
+    let sumOfPrehistory = ''
+    let colLength = globalPreh.length / playerNumber;
+    console.log(globalPreh);
+    for(let i = 0; i < colLength; i++) {
+        prehistory += globalPreh[id + i*playerNumber];
+        sumOfPrehistory = 0;
+        for(let j = 0; j < playerNumber; j++) {
+            if(globalPreh[j + i*playerNumber] === 1 && j + i*playerNumber !== id + i*playerNumber) {
+                sumOfPrehistory += 1;
+            }
+        }
+        sumOfPrehistory = sumOfPrehistory.toString(2);
+        while(sumOfPrehistory.split().length < playerNumber - 1) {
+            sumOfPrehistory = '0' + sumOfPrehistory;
+        }
+        prehistory += sumOfPrehistory;
+    }
+    console.log(prehistory);
+    return prehistory;
+}
+
+// function getPrehistory(id, playerNumber) {
+//     let sumOfPrehistory = '';
+//     let preh = globalPreh.slice();
+//     let colLength = preh.length / playerNumber;
+//     for(let i = 0; i < colLength; i++) {
+//         sumOfPrehistory += preh[id + i*playerNumber];
+//         for(let j = 0; j < playerNumber; j++) {
+//             if(j != id) {
+//                 sumOfPrehistory += preh[j + i*playerNumber];
+//             }
+//         }
+//     }
+//     return sumOfPrehistory;
+// }

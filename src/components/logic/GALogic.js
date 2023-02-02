@@ -35,6 +35,9 @@ export function calcFitness(Individuals, numOfTournaments) {
     let sumFitness = 0;
     let powerValue = 2;
     for(let i = 0; i < Individuals.length; i++) {
+        console.log('calc', Individuals[i].calculates);
+        console.log('pts', Individuals[i].sumPoints);
+        console.log('pd', Individuals[i].playedGames);
         // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments), powerValue);
         Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
         Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
@@ -49,7 +52,7 @@ export function calcFitness(Individuals, numOfTournaments) {
             Individuals[i].fitness = Individuals[i].fitnessPoints/sumFitness;
         }
     }
-    // console.log(Individuals);
+    console.log(Individuals);
 }
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
