@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt, globalPreh } from "./utils";
+import { readData, createRandomInputData, getRandomInt, globalPreh, getPrehistory, getDebugPrehistory } from "./utils";
 import { gener_history_freq } from "./utils";
 
 export const globalSeed = [-1];
@@ -120,11 +120,10 @@ function standardGame(
   for (let j = 0; j < playersIds.length; j++) {
     individuals[playersIds[j]].reset();
   }
+  while (playersIds.length > 0) {
   for (let i = 0; i < numOfTournaments; i++) {
     console.log(`Torunament: ${i}`);
-    console.log("prehistory", playerOutputs.slice());
     let playersDecision = [];
-    playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
     for (let j = 0; j < playersIds.length; j++) {
       playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
       individuals[playersIds[j]].playedGames++;
@@ -142,7 +141,7 @@ function standardGame(
         playerOutputs[0] ===
         playerOutputs[1]
       ) {
-        if (playerOutputs[playerOutputs.length - 1] === 1) {
+        if (playerOutputs[1] === 1) {
           individuals[playersIds[0]].points += c1;
           individuals[playersIds[1]].points += c2;
         } else {
@@ -169,6 +168,11 @@ function standardGame(
         }
       }
     }
+    console.log("prehistory", playerOutputs.slice());
+    for (let j = 0; j < playersIds.length; j++) {
+      let playerPreh = getPrehistory(playersIds[j], playerNumber);
+      console.log(`prehistory ${j}:`, getDebugPrehistory(playerPreh));
+    }
     console.log("player 1 points", individuals[0].points);
     console.log("player 2 points", individuals[1].points);
     individuals.forEach((element) => {
@@ -177,10 +181,13 @@ function standardGame(
     console.log("player 1 sum points", individuals[0].sumPoints);
     console.log("player 2 sum points", individuals[1].sumPoints);
     console.log(gener_history_freq);
+    }
+    playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
   }
-  // individuals.forEach((element) => {
-  //   element.reset();
-  // });
+   //   }
+    //   individuals.forEach((element) => {
+    //     element.reset();
+    //   });
 }
 
 // function standardGame(
