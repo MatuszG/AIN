@@ -35,12 +35,12 @@ export function calcFitness(Individuals, numOfTournaments) {
     let sumFitness = 0;
     let powerValue = 2;
     for(let i = 0; i < Individuals.length; i++) {
-        console.log('calc', Individuals[i].calculates);
-        console.log('pts', Individuals[i].sumPoints);
-        console.log('pd', Individuals[i].playedGames);
+        // console.log('calc', Individuals[i].calculates);
+        // console.log('pts', Individuals[i].sumPoints);
+        // console.log('pd', Individuals[i].playedGames);
         // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments), powerValue);
-        Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
-        Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].calculates * numOfTournaments);
+        Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
+        Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         // sumFitness = Individuals[i].fitnessPoints;
         sumFitness = Individuals[i].fitnessPoints;
     }
@@ -52,7 +52,7 @@ export function calcFitness(Individuals, numOfTournaments) {
             Individuals[i].fitness = Individuals[i].fitnessPoints/sumFitness;
         }
     }
-    console.log(Individuals);
+    // console.log(Individuals);
 }
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
@@ -77,7 +77,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
     }
     sortIndividuals(selectedIndividuals);
-    if(elitist) {
+    if(elitist && selectedIndividuals[0].fitnessPoints !== individuals[0].fitnessPoints) {
         selectedIndividuals.splice(-1);
         selectedIndividuals.push(new Individual(individuals[0].prehistory.slice(), individuals[0].strategy.slice(), individuals[0].fitnessPoints));
     }

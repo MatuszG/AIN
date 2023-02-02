@@ -83,7 +83,6 @@ export class Individual {
     calculate(id, playerNumber) {
         let sumOfPrehistory = getPrehistory(id, playerNumber);
         let strategyId = parseInt(sumOfPrehistory, 2);
-        console.log(strategyId);
         this.calculates++;
         gener_history_freq[strategyId]++;
         return this.strategy[strategyId];
@@ -141,7 +140,6 @@ function getPrehistory(id, playerNumber) {
     let prehistory = '';
     let sumOfPrehistory = ''
     let colLength = globalPreh.length / playerNumber;
-    console.log(globalPreh);
     for(let i = 0; i < colLength; i++) {
         prehistory += globalPreh[id + i*playerNumber];
         sumOfPrehistory = 0;
@@ -151,12 +149,11 @@ function getPrehistory(id, playerNumber) {
             }
         }
         sumOfPrehistory = sumOfPrehistory.toString(2);
-        while(sumOfPrehistory.split().length < playerNumber - 1) {
+        while(sumOfPrehistory.split('').length < playerNumber - 1) {
             sumOfPrehistory = '0' + sumOfPrehistory;
         }
         prehistory += sumOfPrehistory;
     }
-    console.log(prehistory);
     return prehistory;
 }
 
