@@ -31,7 +31,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path(__dirname, "..", "public", "index.html"),
-      publicPath: "/",
+      publicPath: "./",
     }),
     new webpack.LoaderOptionsPlugin({
       options: {
