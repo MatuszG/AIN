@@ -1,4 +1,5 @@
 export const gener_history_freq = [];
+export let globalPreh = [];
 
 export function getBinary(probOfInit) {
     if(Math.random() < probOfInit) return 1;
@@ -48,6 +49,7 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
             }
             individuals.push(new Individual(prehistory, strategy, 0));
         }
+        globalPreh = prehistory;
     }
     return individuals;
 }
@@ -65,6 +67,7 @@ export function createRandomInputData(popSize, prehistoryLength, playerNumber, s
         }
         individuals.push(new Individual(prehistory, strategy, 0));
     }
+    globalPreh = prehistory;
     return individuals;
 }
 
@@ -115,17 +118,41 @@ export class Individual {
     }
 }
 
-function getPrehistory(id, playerNumber, prehistory) {
-    let sumOfPrehistory = '';
-    let preh = prehistory.slice();
-    let colLength = preh.length / playerNumber;
+function getPrehistory(id, playerNumber) {
+    let prehistory = '';
+    let sumOfPrehistory = ''
+    let colLength = globalPreh.length / playerNumber;
+    // console.log(globalPreh);
     for(let i = 0; i < colLength; i++) {
-        sumOfPrehistory += preh[id + i*playerNumber];
+        prehistory += globalPreh[id + i*playerNumber];
+        sumOfPrehistory = 0;
         for(let j = 0; j < playerNumber; j++) {
-            if(j != id) {
-                sumOfPrehistory += preh[j + i*playerNumber];
+            if(globalPreh[j + i*playerNumber] === 1 && j + i*playerNumber !== id + i*playerNumber) {
+                sumOfPrehistory += 1;
             }
         }
+        sumOfPrehistory = sumOfPrehistory.toString(2);
+        while(sumOfPrehistory.split().length < playerNumber - 1) {
+            sumOfPrehistory = '0' + sumOfPrehistory;
+        }
+        prehistory += sumOfPrehistory;
     }
-    return sumOfPrehistory;
+    console.log(prehistory);
+    return prehistory;
 }
+
+// function getPrehistory(id, playerNumber, prehistory) {
+//     let sumOfPrehistory = '';
+//     let preh = prehistory.slice();
+//     let colLength = preh.length / playerNumber;
+//     for(let i = 0; i < colLength; i++) {
+//         sumOfPrehistory += preh[id + i*playerNumber];
+//         for(let j = 0; j < playerNumber; j++) {
+//             if(j != id) {
+//                 sumOfPrehistory += preh[j + i*playerNumber];
+//             }
+//         }
+//     }
+//     return sumOfPrehistory;
+// }
+
