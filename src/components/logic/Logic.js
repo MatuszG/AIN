@@ -122,13 +122,14 @@ function standardGame(
   }
   while (playersIds.length > 0) {
   for (let i = 0; i < numOfTournaments; i++) {
-    console.log(`Torunament: ${i}`);
+    console.log(`Gra: ${i + 1}`);
+    // console.log("prehistory", globalPreh.slice());
     let playersDecision = [];
     for (let j = 0; j < playersIds.length; j++) {
       playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
       individuals[playersIds[j]].playedGames++;
     }
-    for (let j = 0; j < playersDecision.length; j++) {
+    for (let j = playersDecision.length - 1; j >= 0; j--) {
       playerOutputs.unshift(playersDecision[j]);
     }
     playerOutputs.splice(playerOutputs.length - 2, 2);
