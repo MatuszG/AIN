@@ -96,7 +96,7 @@ function standardGame(
         playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
         // individuals[playersIds[j]].playedGames++;
       }
-      for (let j = 0; j < playersDecision.length; j++) {
+      for (let j = playersDecision.length - 1; j >= 0; j--) {
         playerOutputs.unshift(playersDecision[j]);
       }
       playerOutputs.splice(playerOutputs.length - 2, 2);
