@@ -150,7 +150,7 @@ function standardGame(
           individuals[playersIds[1]].points += d4;
         }
       } else {
-        if (playerOutputs[0] === 1) {
+        if (playerOutputs[1] === 1) {
           individuals[playersIds[0]].points += d1;
           individuals[playersIds[1]].points += c3;
         } else {
