@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt, setSeed, setStart, globalPreh } from "./utils";
+import { readData, createRandomInputData, getRandomInt, setSeed, setStart, globalPreh, sumPoints } from "./utils";
 import { gener_history_freq } from "./utils";
 
 export default function Logic(
@@ -34,8 +34,8 @@ export default function Logic(
 ) {
   setSeed(clockSeed, seed);
   let playerNumber = n;
-  const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
   playerNumber = setStart(twoPd, n, strategyLength);
+  const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
   let runs = 0;
   let individuals = createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit);
   while (runs++ < numOfRuns) {
@@ -88,9 +88,11 @@ function standardGame(
   for (let j = 0; j < playersIds.length; j++) {
     individuals[playersIds[j]].reset();
   }
+  sumPoints[0] = 0;
   while(playersIds.length > 0) {
     // const test = new Worker('./Worker1.js')
     for (let i = 0; i < numOfTournaments; i++) {
+      console.log(i);
       let playersDecision = [];
       for (let j = 0; j < playersIds.length; j++) {
         playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
@@ -152,7 +154,6 @@ function findPlayers(individuals, playerNumber, numOfOpponents) {
     if (individuals[i].playedGames <= numOfOpponents && idPlayers.length < playerNumber) {
       idPlayers.push(i);
       individuals[i].playedGames++;
-      break;
     }
   }
   while (idPlayers.length < playerNumber && idPlayers.length > 0) {
@@ -169,10 +170,10 @@ function findPlayers(individuals, playerNumber, numOfOpponents) {
 
 function sortIndividuals(individuals) {
   individuals.sort(function compare(a, b) {
-      if(a.calculates > b.calculates) {
+      if(a.playedGames > b.playedGames) {
           return 1;
       }
-      else if(a.calculates < b.calculates) {
+      else if(a.playedGames < b.playedGames) {
           return -1;
       }
       return 0;

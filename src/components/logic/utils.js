@@ -1,6 +1,7 @@
 export const gener_history_freq = [];
 export const globalSeed = [-1];
 export let globalPreh = [];
+export let sumPoints = [0];
 
 export function getBinary(probOfInit) {
     if(Math.random() < probOfInit) return 1;
@@ -89,6 +90,7 @@ export class Individual {
     }
     resetPoints() {
         this.sumPoints += this.points;
+        sumPoints[0] += this.points
         this.points = 0;
     }
     reset() {
