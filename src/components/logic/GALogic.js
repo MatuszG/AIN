@@ -59,14 +59,10 @@ export function calcFitness(Individuals, numOfTournaments) {
         sumFitness += Individuals[i].fitness;
     }
     for(let i = 0; i < Individuals.length; i++) {
-        if(sumFitness === 0) {
-            Individuals[i].fitness = 0;
-        }
-        else {
+        if(sumFitness !== 0) {
             Individuals[i].fitness = Individuals[i].fitness/sumFitness;
         }
     }
-    // console.log(Individuals);
 }
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
@@ -108,7 +104,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
             selectedIndividuals.push(new Individual(individuals[0].prehistory.slice(), individuals[0].strategy.slice(), individuals[0].fitness));
         }
     }
-    individuals = selectedIndividuals;
+    individuals = selectedIndividuals.slice();
     mutation(individuals, mutationProb);
 }
 

@@ -90,7 +90,7 @@ export class Individual {
     }
     resetPoints() {
         this.sumPoints += this.points;
-        sumPoints[0] += this.points
+        sumPoints[0] += this.points;
         this.points = 0;
     }
     reset() {

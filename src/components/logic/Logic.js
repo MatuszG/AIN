@@ -85,18 +85,13 @@ function standardGame(
 ) {
   let playerOutputs = globalPreh.slice();
   let playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
-  for (let j = 0; j < playersIds.length; j++) {
-    individuals[playersIds[j]].reset();
-  }
+  // console.log(individuals)
   sumPoints[0] = 0;
   while(playersIds.length > 0) {
-    // const test = new Worker('./Worker1.js')
     for (let i = 0; i < numOfTournaments; i++) {
-      console.log(i);
       let playersDecision = [];
       for (let j = 0; j < playersIds.length; j++) {
         playersDecision.push(individuals[playersIds[j]].calculate(j, playerNumber));
-        // individuals[playersIds[j]].playedGames++;
       }
       for (let j = playersDecision.length - 1; j >= 0; j--) {
         playerOutputs.unshift(playersDecision[j]);
@@ -138,9 +133,9 @@ function standardGame(
           }
         }
       }
-      individuals.forEach((element) => {
-        element.resetPoints();
-      });
+      for(let i = 0; i < individuals.length; i++) {
+        individuals[i].resetPoints();
+      }
     }
     playersIds = findPlayers(individuals, playerNumber, numOfOpponents);
   }
@@ -160,7 +155,7 @@ function findPlayers(individuals, playerNumber, numOfOpponents) {
     let randomId;
     do {
       randomId = getRandomInt(0, individuals.length);
-    } while (idPlayers.includes(randomId));
+    } while (idPlayers.includes(randomId) && individuals[randomId].playedGames > individuals[0].playedGames);
     idPlayers.push(randomId);
     individuals[randomId].playedGames++;
   }
@@ -188,10 +183,10 @@ function countCooperators(prehistory, playerNumber) {
   return cooperators;
 }
 
-function resetScoresindividuals(Individuals) {
-  Individuals.forEach((element) => {
-    element.hardReset();
-  });
+function resetScoresindividuals(individuals) {
+  for(let i = 0; i < individuals.length; i++) {
+    individuals[i].hardReset();
+  }
 }
 
 function createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit) {
