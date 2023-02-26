@@ -2,6 +2,8 @@ import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogi
 import { readData, createRandomInputData, getRandomInt, setSeed, setStart, globalPreh, sumPoints } from "./utils";
 import { gener_history_freq } from "./utils";
 
+export let points = [];
+
 export default function Logic(
   numOfRuns,
   numOfGenerations,
@@ -38,9 +40,15 @@ export default function Logic(
   const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
   let runs = 0;
   let individuals = createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit);
+  let strategies = [];
   while (runs++ < numOfRuns) {
     for (let generation = 0; generation <= numOfGenerations; generation++) {
       console.log(`Generation: ${generation}`);
+      points = [];
+      for (let i = 0; i < individuals.length; i++) {
+        points.push([-1]);
+      }
+      // console.log(points);
       standardGame(
         numOfTournaments,
         individuals,
@@ -60,6 +68,16 @@ export default function Logic(
       const avgPlayer = findAveragePlayer(individuals);
       const max = bestPlayer.fitnessPoints;
       const avg = avgPlayer.fitnessPoints;
+      let test = individuals.slice();
+      let strategies_some = [];
+      for (let i = 0; i < test.length; i++) {
+        // console.log(`points ${i}`, test[i].sumPoints);
+        // console.log(`strategy ${i}`, test[i].strategy);
+        // console.log(`fitnessPoints ${i}`, test[i].fitnessPoints);
+        // console.log(`fitness ${i}`, test[i].fitness);
+        strategies_some.push(test[i].strategy);
+      }
+      strategies.push(strategies_some);
       evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
       setMaxSumPoints((prev) => [...prev, max]);
@@ -67,6 +85,7 @@ export default function Logic(
       resetScoresindividuals(individuals);
     }
   }
+  console.log(strategies);
 }
 
 function standardGame(
@@ -107,29 +126,31 @@ function standardGame(
           playerOutputs[1]
         ) {
           if (playerOutputs[1] === 1) {
-            individuals[playersIds[0]].points += c1;
-            individuals[playersIds[1]].points += c2;
+            individuals[playersIds[0]].points += parseInt(c1);
+            individuals[playersIds[1]].points += parseInt(c2);
           } else {
-            individuals[playersIds[0]].points += d3;
-            individuals[playersIds[1]].points += d4;
+            individuals[playersIds[0]].points += parseInt(d3);
+            individuals[playersIds[1]].points += parseInt(d4);
           }
         } else {
           if (playerOutputs[1] === 1) {
-            individuals[playersIds[0]].points += d1;
-            individuals[playersIds[1]].points += c3;
+            individuals[playersIds[0]].points += parseInt(d1);
+            individuals[playersIds[1]].points += parseInt(c3);
           } else {
-            individuals[playersIds[0]].points += c4;
-            individuals[playersIds[1]].points += d2;
+            individuals[playersIds[0]].points += parseInt(c4);
+            individuals[playersIds[1]].points += parseInt(d2);
           }
         }
+        points[playersIds[0]].push(individuals[playersIds[0]].points);
+        points[playersIds[1]].push(individuals[playersIds[1]].points);
       } else {
         let preh = playerOutputs.slice();
         let cooperators = countCooperators(preh, playersIds.length);
         for (let j = 0; j < playersIds.length; j++) {
           if (preh[j] === 1) {
-            individuals[playersIds[j]].points += 2 * (cooperators - 1);
+            individuals[playersIds[j]].points += parseInt(2 * (cooperators - 1));
           } else {
-            individuals[playersIds[j]].points += 2 * (cooperators - 1) + 1;
+            individuals[playersIds[j]].points += parseInt2(2 * (cooperators - 1) + 1);
           }
         }
       }

@@ -3,13 +3,17 @@ import {Individual, randomRange, sumPoints} from './utils'
 export function findBestPlayer(individuals) {
     let fitnessPoints = 0;
     let player = individuals[0];
+    let id = 0;
     for(let i = 0; i < individuals.length; i++) {
         if(fitnessPoints < individuals[i].fitnessPoints) {
             fitnessPoints = individuals[i].fitnessPoints;
             player = individuals[i];
+            id = i;
         }
     }
     // console.log("max:", player.fitnessPoints)
+    console.log(player);
+    console.log(id);
     return player;
 }
 
@@ -47,7 +51,8 @@ export function calcFitness(Individuals, numOfTournaments) {
         // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints, powerValue);
         // console.log(Individuals[i].playedGames);
         // Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
-        Individuals[i].fitness = Individuals[i].sumPoints/sumPoints[0];
+        // Individuals[i].fitness = Individuals[i].sumPoints/sumPoints[0];
+        Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         // console.log(Individuals[i].fitnessPoints);
         // if(Individuals[i].fitnessPoints>50) {
@@ -67,8 +72,8 @@ export function calcFitness(Individuals, numOfTournaments) {
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
     sortIndividuals(individuals);
-    console.log(individuals[0].sumPoints/(individuals[0].playedGames * 151));
-    console.log(individuals[0].sumPoints)
+    // console.log(individuals[0].sumPoints/(individuals[0].playedGames * 151));
+    // console.log(individuals[0].sumPoints)
     // console.log(individuals[0].fitness);
     // for(let i = 0; i < individuals.length; i++) {
     //     console.log(individuals[i].fitness);
@@ -111,8 +116,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
 function crossover(firstIndividual, secondIndividual, range) {
     let newStrategy = firstIndividual.strategy.slice(0, range);
     newStrategy = newStrategy.concat(secondIndividual.strategy.slice(range));
-    firstIndividual.strategy = newStrategy;
-    return firstIndividual;
+    return new Individual(firstIndividual.prehistory.slice(), newStrategy, 0);
 }
 
 function mutation(individuals, mutationProb) {
