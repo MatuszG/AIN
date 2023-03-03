@@ -54,6 +54,8 @@ const HomePage = () => {
   const [generations, setGenerations] = useState([]);
   const [sumMaxPoints, setMaxSumPoints] = useState([]);
   const [sumAvgPoints, setAvgSumPoints] = useState([]);
+  const [strategies, setStrategies] = useState([]);
+  const [strategiesId, setStrategiesId] = useState([]);
   const [strategyLength, setStrategyLength] = useState(2);
   const [strategyFromFile, setStrategyFromFile] = useState();
 
@@ -141,16 +143,53 @@ const HomePage = () => {
         data: sumMaxPoints,
         borderColor: "red",
         label: "Best fit",
-        tension: 0.5,
+        tension: 0.1,
       },
       {
         data: sumAvgPoints,
         label: "Avg fit",
         borderColor: "blue",
-        tension: 0.5,
+        tension: 0.1,
       },
     ],
   };
+  const colors = [
+    "green",
+    "purple",
+    "yellow",
+    "grey",
+    "white",
+    "olive",
+    "black",
+    "gold",
+    "lime",
+    "cyan",
+    "pink",
+    "brown",
+    "indigo",
+  ]
+  const datasets = [];
+  while(colors.length < strategies.length) {
+    let randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    colors.push(randomColor);
+  }
+
+  for(let i = 0; i < strategies.length; i++) {
+    let nr = parseInt(fregGenStart) + parseInt(deltaFreg) * i;
+    datasets[i] = {
+      data: strategies[i],
+      borderColor: colors[i],
+      label: `gen ${nr}`,
+      tension: 0.1,
+    }
+    
+  }
+
+  const strategyData = {
+    labels: strategiesId,
+    datasets: datasets
+  }
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -522,6 +561,8 @@ const HomePage = () => {
                     setMaxSumPoints([]);
                     setAvgSumPoints([]);
                     setGenerations([]);
+                    setStrategies([]);
+                    setStrategiesId([]);
                     Logic(
                       numOfRuns,
                       numOfGenerations,
@@ -548,9 +589,13 @@ const HomePage = () => {
                       debug,
                       clockSeed,
                       seed,
+                      fregGenStart,
+                      deltaFreg,
                       setGenerations,
                       setMaxSumPoints,
-                      setAvgSumPoints
+                      setAvgSumPoints,
+                      setStrategies,
+                      setStrategiesId
                     );
                   }}
                 >
@@ -569,7 +614,7 @@ const HomePage = () => {
           <Line data={data} options={options} />
         </div>
         <div className="Chart">
-          <Line data={data} options={options} />
+          <Line data={strategyData} options={options} />
         </div>
       </div>
     </div>

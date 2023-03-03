@@ -3,8 +3,13 @@ export const globalSeed = [-1];
 export let globalPreh = [];
 export let sumPoints = [0];
 
+export function copyArray(original) {
+    // return JSON.parse(JSON.stringify(original));
+    return [...original];
+}
+
 export function getBinary(probOfInit) {
-    if(Math.random() < probOfInit) return 1;
+    if(Math.random() < parseFloat(probOfInit)) return 1;
     else return 0;
 }
 
@@ -122,11 +127,15 @@ export function setSeed(clockSeed, seed){
     }
 }
 
-export function setStart(twoPd, n, strategyLength) {
+export function setPlayers(twoPd, n) {
     let playerNumber = n;
     if (twoPd) {
         playerNumber = 2;
     }
+    return playerNumber;
+}
+
+export function setFreq(strategyLength) {
     if(gener_history_freq.length === 0) {
         for(let i = 0; i < strategyLength; i++) {
             gener_history_freq.push(0);
@@ -135,7 +144,22 @@ export function setStart(twoPd, n, strategyLength) {
     for(let i = 0; i < strategyLength; i++) {
         gener_history_freq[i] = 0;
     }
-    return playerNumber;
+}
+
+export function resetFreq(strategyLength) {
+    for(let i = 0; i < strategyLength; i++) {
+        gener_history_freq[i] = 0;
+    }
+}
+
+export function calcFreq() {
+    let initialValue = 0;
+    let history_freq = gener_history_freq.slice();
+    let sum = history_freq.reduce((accumulator, currentValue) => accumulator + currentValue, initialValue);
+    for(let i = 0; i < gener_history_freq.length; i++) {
+        history_freq[i] = history_freq[i]/sum;
+    }
+    return history_freq;
 }
 
 function getPrehistory(id, playerNumber) {
@@ -156,6 +180,7 @@ function getPrehistory(id, playerNumber) {
         }
         prehistory += sumOfPrehistory;
     }
+    // console.log(prehistory);
     return prehistory;
 }
 

@@ -1,4 +1,4 @@
-import {Individual, randomRange, sumPoints} from './utils'
+import {Individual, randomRange, sumPoints, copyArray} from './utils'
 
 export function findBestPlayer(individuals) {
     let fitnessPoints = 0;
@@ -11,9 +11,8 @@ export function findBestPlayer(individuals) {
             id = i;
         }
     }
-    // console.log("max:", player.fitnessPoints)
-    console.log(player);
-    console.log(id);
+    // console.log(player);
+    // console.log(id);
     return player;
 }
 
@@ -53,6 +52,7 @@ export function calcFitness(Individuals, numOfTournaments) {
         // Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         // Individuals[i].fitness = Individuals[i].sumPoints/sumPoints[0];
         Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
+        // Individuals[i].fitness = Math.pow(Individuals[i].sumPoints, powerValue);
         Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         // console.log(Individuals[i].fitnessPoints);
         // if(Individuals[i].fitnessPoints>50) {
@@ -85,6 +85,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         let firstIndividual = poolSelection(individuals, tournament_size);
         if((range/strategyLength) <= crossoverProb ) {
             let secondIndividual = poolSelection(individuals, tournament_size);
+            // selectedIndividuals.push(crossover(firstIndividual, secondIndividual, range));
             if(selectedIndividuals.length === individuals.length - 1){
                 selectedIndividuals.push(crossover(firstIndividual, secondIndividual, range));
             }
@@ -94,7 +95,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
             }
         }
         else {
-            selectedIndividuals.push(firstIndividual);
+            selectedIndividuals.push(new Individual(firstIndividual.prehistory.slice(), copyArray(firstIndividual.strategy), firstIndividual.fitness));
         }
     }
     if(elitist) {
@@ -106,16 +107,30 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
         if(!isElitist) {
             selectedIndividuals.splice(-1);
-            selectedIndividuals.push(new Individual(individuals[0].prehistory.slice(), individuals[0].strategy.slice(), individuals[0].fitness));
+            selectedIndividuals.push(new Individual(individuals[0].prehistory.slice(), copyArray(firstIndividual.strategy), individuals[0].fitness));
         }
     }
-    individuals = selectedIndividuals.slice();
+    individuals = copyArray(selectedIndividuals);
     mutation(individuals, mutationProb);
+    return individuals;
 }
 
 function crossover(firstIndividual, secondIndividual, range) {
+    // console.log('range', range);
     let newStrategy = firstIndividual.strategy.slice(0, range);
+    // console.log('range1', newStrategy);
     newStrategy = newStrategy.concat(secondIndividual.strategy.slice(range));
+    // console.log('range2', secondIndividual.strategy.slice(range));
+    // console.log('range3', newStrategy);
+    // let newstr = new Array();
+    // for(let i = 0; i < 64; i++) {
+    //     if(Math.random() < 0.5) {
+    //         newstr.push(1);
+    //     }
+    //     else {
+    //         newstr.push(0);
+    //     }
+    // }
     return new Individual(firstIndividual.prehistory.slice(), newStrategy, 0);
 }
 
@@ -136,19 +151,44 @@ function mutateBit(bit) {
 
 function poolSelection(individuals, tournament_size) {
     let ind = individuals[individuals.length - 1];
+    
+    // for(let i = 0; i < individuals.length; i++) {
+    //     random -= individuals[i].fitness;
+    //     if(random <= 0 && ind.fitness < individuals[i].fitness ) {
+    //         // console.log(i);
+    //         // console.log(ind.fitness);
+    //         // console.log(individuals[i].fitness);
+    //         ind = new Individual(individuals[i].prehistory.slice(), individuals[i].strategy.slice(), individuals[i].fitness);
+    //     } 
+    // }
+    let random = Math.random();
     for(let i = 0; i < tournament_size; i++) {
-        let random = Math.random();
-        for(let i = 0; i < individuals.length; i++) {
-            random -= individuals[i].fitness;
-            if(random <= 0 && ind.fitness < individuals[i].fitness ) {
-                // console.log(i);
-                // console.log(ind.fitness);
-                // console.log(individuals[i].fitness);
-                ind = new Individual(individuals[i].prehistory.slice(), individuals[i].strategy.slice(), individuals[i].fitness);
-            } 
+        let random2 = Math.random();
+        if(random < random2) {
+            random = random2;
         }
     }
+    for(let i = 0; i < individuals.length; i++) {
+        random -= individuals[i].fitness;
+        if(random <= 0) {
+            // console.log(i);
+            // console.log(ind.fitness);
+            // console.log(individuals[i].fitness);
+            ind = new Individual(individuals[i].prehistory.slice(), individuals[i].strategy.slice(), individuals[i].fitness);
+        } 
+    }
+
     return new Individual(ind.prehistory, ind.strategy, ind.fitness);
+}
+
+function poolSelection2(individuals, tournament_size) {
+    let newInd = [];
+    for(let i = 0; i < tournament_size; i++) {
+        let random = Math.floor(Math.random() * individuals.length);
+        newInd.push(individuals[random])
+    }
+    sortIndividuals(newInd);
+    return newInd[0];
 }
 
 function sortIndividuals(individuals) {

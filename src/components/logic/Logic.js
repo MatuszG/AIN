@@ -1,6 +1,6 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt, setSeed, setStart, globalPreh, sumPoints } from "./utils";
-import { gener_history_freq } from "./utils";
+import { readData, createRandomInputData, getRandomInt, setSeed, setPlayers, globalPreh, sumPoints, setFreq, calcFreq, copyArray } from "./utils";
+import { gener_history_freq, resetFreq } from "./utils";
 
 export let points = [];
 
@@ -30,17 +30,30 @@ export default function Logic(
   debug,
   clockSeed,
   seed,
+  fregGenStart,
+  deltaFreg,
   setGenerations,
   setMaxSumPoints,
-  setAvgSumPoints
+  setAvgSumPoints,
+  setStrategies,
+  setStrategiesId
 ) {
   setSeed(clockSeed, seed);
   let playerNumber = n;
-  playerNumber = setStart(twoPd, n, strategyLength);
-  const strategyLength = Math.pow(2, playerNumber * prehistoryLength);
+  playerNumber = setPlayers(twoPd, n);
+  const strategyLength = Math.pow(2, playerNumber * parseInt(prehistoryLength));
+  setFreq(strategyLength);
+  let strategiesId = [...Array(strategyLength).keys()];
   let runs = 0;
   let individuals = createIndividuals(prehistoryLength, playerNumber, strategyFromFile, popSize, debug, strategyLength, probOfInit);
   let strategies = [];
+  let generalHistory = [];
+  let test123;
+  let generationsToPrintPlot = [];
+  for(let i = 0; i < numOfGenerations; i++) {
+    let generationToPrint = parseInt(fregGenStart) + i * parseInt(deltaFreg);
+    generationsToPrintPlot.push(generationToPrint);
+  }
   while (runs++ < numOfRuns) {
     for (let generation = 0; generation <= numOfGenerations; generation++) {
       console.log(`Generation: ${generation}`);
@@ -50,10 +63,10 @@ export default function Logic(
       }
       // console.log(points);
       standardGame(
-        numOfTournaments,
+        parseInt(numOfTournaments),
         individuals,
         playerNumber,
-        numOfOpponents,
+        parseInt(numOfOpponents),
         c1,
         c2,
         c3,
@@ -63,29 +76,45 @@ export default function Logic(
         d3,
         d4
       );
-      calcFitness(individuals, numOfTournaments);
+      calcFitness(individuals, parseInt(numOfTournaments));
       const bestPlayer = findBestPlayer(individuals);
       const avgPlayer = findAveragePlayer(individuals);
       const max = bestPlayer.fitnessPoints;
       const avg = avgPlayer.fitnessPoints;
-      let test = individuals.slice();
+      let test = copyArray(individuals);
       let strategies_some = [];
       for (let i = 0; i < test.length; i++) {
         // console.log(`points ${i}`, test[i].sumPoints);
         // console.log(`strategy ${i}`, test[i].strategy);
         // console.log(`fitnessPoints ${i}`, test[i].fitnessPoints);
         // console.log(`fitness ${i}`, test[i].fitness);
-        strategies_some.push(test[i].strategy);
+        strategies_some.push(copyArray(test[i].strategy));
       }
+      // if(generation === 0) {
+      //   console.log(strategies_some)
+      //   test123 = strategies_some;
+      // }
       strategies.push(strategies_some);
-      evolve(individuals, crossoverProb, mutationProb, tournament_size, elistStrategy);
       setGenerations((prev) => [...prev, generation]);
       setMaxSumPoints((prev) => [...prev, max]);
       setAvgSumPoints((prev) => [...prev, avg]);
+      individuals = evolve(individuals, parseFloat(crossoverProb), parseFloat(mutationProb), parseInt(tournament_size), elistStrategy);
       resetScoresindividuals(individuals);
+      if(generationsToPrintPlot.includes(generation)) {
+        generalHistory.push(calcFreq(gener_history_freq));
+        resetFreq(strategyLength);
+      }
+      // for(let i = 0; i < individuals.length; i++) {
+      //   console.log('strategy', i, individuals[i].strategy);
+      // }
     }
+    setStrategiesId(strategiesId);
+    setStrategies(generalHistory);
   }
-  console.log(strategies);
+  // console.log(strategiesId);
+  // console.log(calcFreq(gener_history_freq));
+  // console.log(test123);
+  // console.log(strategies);
 }
 
 function standardGame(
@@ -148,9 +177,13 @@ function standardGame(
         let cooperators = countCooperators(preh, playersIds.length);
         for (let j = 0; j < playersIds.length; j++) {
           if (preh[j] === 1) {
-            individuals[playersIds[j]].points += parseInt(2 * (cooperators - 1));
+            let points =  2 * (cooperators - 1);
+            if(points > 0)
+            individuals[playersIds[j]].points += 2 * (cooperators - 1);
           } else {
-            individuals[playersIds[j]].points += parseInt2(2 * (cooperators - 1) + 1);
+            let points =  2 * (cooperators - 1) + 1;
+            if(points > 0)
+            individuals[playersIds[j]].points += 2 * (cooperators - 1) + 1;
           }
         }
       }
@@ -166,17 +199,21 @@ function findPlayers(individuals, playerNumber, numOfOpponents) {
   let idPlayers = [];
   if(individuals.length < playerNumber) return idPlayers;
   sortIndividuals(individuals);
+  // for(let i = 0; i < individuals.length; i++) {
+  //   console.log('test', i, individuals.slice()[i].sumPoints);
+  // }
   for (let i = 0; i < individuals.length; i++) {
     if (individuals[i].playedGames <= numOfOpponents && idPlayers.length < playerNumber) {
       idPlayers.push(i);
       individuals[i].playedGames++;
+      break;
     }
   }
   while (idPlayers.length < playerNumber && idPlayers.length > 0) {
     let randomId;
     do {
       randomId = getRandomInt(0, individuals.length);
-    } while (idPlayers.includes(randomId) && individuals[randomId].playedGames > individuals[0].playedGames);
+    } while (idPlayers.includes(randomId));
     idPlayers.push(randomId);
     individuals[randomId].playedGames++;
   }
