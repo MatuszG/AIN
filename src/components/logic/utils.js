@@ -3,6 +3,40 @@ export const globalSeed = [-1];
 export let globalPreh = [];
 export let sumPoints = [0];
 
+let seed = 12345; // Initial seed value
+const a = 1103515245; // Multiplier
+const c = 12345; // Increment
+const m = Math.pow(2, 32); // Modulus (2^32)
+
+const seedrandom = require('seedrandom');
+
+const rng = seedrandom('myseed'); // Create a new random number generator with a seed
+
+const randomNumber = rng(); // Generate a random number between 0 and 1
+
+function random() {
+  seed = (a * seed + c) % m;
+  return seed / m;
+}
+
+export function setSeed(clockSeed, seed) {
+    // console.log(clockSeed);
+    console.log(randomNumber);
+    if(clockSeed) {
+        seed = Math.floor(Math.random()*100000);
+        console.log(seed)
+    }
+    else {
+        seed = seed;
+    }
+    // console.log(random());
+    // console.log(random());
+    // generator = seedrandom(globalSeed[0]);
+    // const randomNumber = generator();
+    // console.log(randomNumber.)
+}
+
+
 export function copyArray(original) {
     // return JSON.parse(JSON.stringify(original));
     return [...original];
@@ -118,14 +152,14 @@ export class Individual {
     }
 }
 
-export function setSeed(clockSeed, seed){
-    if(clockSeed) {
-        globalSeed[0] = -1;
-    }
-    else {
-        globalSeed[0] = seed;
-    }
-}
+// export function setSeed(clockSeed, seed){
+//     if(clockSeed) {
+//         globalSeed[0] = -1;
+//     }
+//     else {
+//         globalSeed[0] = seed;
+//     }
+// }
 
 export function setPlayers(twoPd, n) {
     let playerNumber = n;

@@ -1,4 +1,4 @@
-import {Individual, randomRange, sumPoints, copyArray} from './utils'
+import {Individual, randomRange, sumPoints, copyArray, getRandomInt} from './utils'
 
 export function findBestPlayer(individuals) {
     let fitnessPoints = 0;
@@ -72,6 +72,32 @@ export function calcFitness(Individuals, numOfTournaments) {
 
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist) {
     sortIndividuals(individuals);
+    let gaInfo = [];
+    gaInfo.push("After GA operators");
+    gaInfo.push("temp_strategies");
+    for(let i = 0; i < individuals.length; i++) {
+        if(Math.random() < crossoverProb) {
+            gaInfo.push(individuals[i].strategy.slice());
+        }
+    }
+    gaInfo.push("parent_strategies");
+    let parents = [];
+    for(let i = 0; i < individuals.length; i++) {
+        let individualsIDs = [];
+        for(let j = 0; j < tournament_size; j++) {
+            individualsIDs.push(getRandomInt(0, individuals.length));
+        }
+        let fitness = 0;
+        let selectedId = -1;
+        for(let j = 0; j < individualsIDs.length; j++) {
+            if(individuals[individualsIDs[j]].fitnessPoints > fitness) {
+                fitness = individuals[individualsIDs[j]].fitnessPoints
+                selectedId = individualsIDs[j];
+            }
+        }
+        parents.push(new Individual([],individuals[selectedId].strategy.slice(), 0));
+        gaInfo.push(individuals[selectedId].strategy.slice());
+    }
     // console.log(individuals[0].sumPoints/(individuals[0].playedGames * 151));
     // console.log(individuals[0].sumPoints)
     // console.log(individuals[0].fitness);

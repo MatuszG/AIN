@@ -196,14 +196,44 @@ const HomePage = () => {
       legend: {
         position: "right",
       },
-      // title: {
-      //   display: true,
-      //   text: "Wykres zależności ",
-      //   font: {
-      //     size: 25,
-      //   },
-      //   color: "white",
-      // }
+      title: {
+        display: true,
+        text: "average total payoff (ATP)",
+        font: {
+          size: 25,
+        },
+        color: "white",
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: "white",
+        },
+      },
+      y: {
+        ticks: {
+          color: "white",
+        },
+      },
+    },
+  };
+
+  const options2 = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "right",
+      },
+      title: {
+        display: true,
+        text: "frequencies of applied strategies",
+        font: {
+          size: 25,
+        },
+        color: "white",
+      }
     },
     scales: {
       x: {
@@ -235,7 +265,7 @@ const HomePage = () => {
                   setPd(twoPd);
                 }}
               />
-              <label htmlFor="2pPD">2pPD</label>
+              <label className="dwa" htmlFor="2pPD">2pPD</label>
             </div>
             <div>
               <div className="HomePage-container-PD-checkbox">
@@ -248,7 +278,7 @@ const HomePage = () => {
                     setPd(!pd);
                   }}
                 />
-                <label htmlFor="PD">PD</label>
+                <label className="dwa" htmlFor="PD">PD</label>
               </div>
               <div>
                 N{" "}
@@ -510,18 +540,9 @@ const HomePage = () => {
                   />
                 </div>
               </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="seed"
-                  value={clockSeed}
-                  onChange={() => setClockSeed(!clockSeed)}
-                />
-                <label htmlFor="seed"> clock_seed</label>
-              </div>
               <div className="HomePage-container-start-container">
                 <div className="HomePage-container-start-container-element">
-                  <p>freg_gen...start</p>
+                  <p>freq_gen_start</p>
                   <input
                     type="number"
                     className="HomePage-container-start-container-text"
@@ -534,9 +555,30 @@ const HomePage = () => {
                   />
                 </div>
               </div>
+              <div className="HomePage-container-start-container-checkbox">
+                  <input
+                    type="checkbox"
+                    id="debug"
+                    checked={debug}
+                    onChange={() => setDebug(!debug)}
+                  />
+                  <label htmlFor="debug"> debug</label>
+                </div>
+            </div>
+            <div className="masz">
+              <div className="HomePage-container-start-container-button">
+                <div>
+                <label htmlFor="seed"> clock_seed </label>
+                <input
+                  type="checkbox"
+                  id="seed"
+                  value={clockSeed}
+                  onChange={() => setClockSeed(!clockSeed)}
+                />
+              </div>
               <div className="HomePage-container-start-container">
                 <div className="HomePage-container-start-container-element">
-                  <p>delta_freg</p>
+                  <p>delta_freq</p>
                   <input
                     type="number"
                     className="HomePage-container-start-container-text"
@@ -549,18 +591,6 @@ const HomePage = () => {
                   />
                 </div>
               </div>
-            </div>
-            <div>
-              <div className="HomePage-container-start-container-button">
-                <div className="HomePage-container-start-container-checkbox">
-                  <input
-                    type="checkbox"
-                    id="debug"
-                    checked={debug}
-                    onChange={() => setDebug(!debug)}
-                  />
-                  <label htmlFor="debug"> debug</label>
-                </div>
                 <button
                   className="HomePage-container-start-container-button-btn"
                   onClick={() => {
@@ -608,14 +638,14 @@ const HomePage = () => {
                   start
                 </button>
               </div>
-              <div className="HomePage-container-start-container-file">
+              {/* <div className="HomePage-container-start-container-file">
                 <button
                   onClick={exportInfo}
                   className="HomePage-container-start-container-file-button"
                 >
                   Pobierz
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -625,7 +655,7 @@ const HomePage = () => {
           <Line data={data} options={options} />
         </div>
         <div className="Chart">
-          <Line data={strategyData} options={options} />
+          <Line data={strategyData} options={options2} />
         </div>
       </div>
     </div>
