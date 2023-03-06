@@ -169,10 +169,11 @@ const HomePage = () => {
     "indigo",
   ];
   const datasets = [];
-  while (colors.length < strategies.length) {
+  useEffect(async () => {
+    while (colors.length < strategies.length) {
     let randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
     colors.push(randomColor);
-  }
+  }},[]);
 
   for (let i = 0; i < strategies.length; i++) {
     let nr = parseInt(fregGenStart) + parseInt(deltaFreg) * i;
@@ -490,6 +491,7 @@ const HomePage = () => {
               <input
                 className="input"
                 type="number"
+                step="0.001"
                 value={mutationProb}
                 onChange={(e) =>
                   e.target.value >= 0

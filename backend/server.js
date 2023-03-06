@@ -18,10 +18,11 @@ app.use(cors());
 app.post('/', (req, res) => {
   res.send('Hello World!');
   const {data} = req.body;
-  console.log(req.body);
+  writeFile(data)
 });
 
-function writeFile(where, what) {
-  fs.writeFile(where, what, { flag: 'w' }, err => {});
+function writeFile(data) {
+  for(let i = 0; i < data.length; i++)
+  fs.writeFile(data[i].filename, data[i].data, { flag: 'w' }, err => {});
 };
 

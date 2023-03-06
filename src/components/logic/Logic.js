@@ -5,7 +5,6 @@ import request from "./requests";
 export let points = [];
 
 async function sendData(data) {
-  console.log('test');
   await request.post("/", {data})
         .then(res=>{
         });
@@ -48,7 +47,12 @@ export default function Logic(
   // var myrng = new Math.seedrandom(Math.random());
   // console.log(myrng());                // Always 0.9282578795792454
   // return;
-  sendData('test');
+  // let data = [];
+  // data.push({
+  //   filename: "testxd.txt",
+  //   data: 'test data'
+  // })
+  // sendData(data);
   setSeed(clockSeed, seed);
   let playerNumber = n;
   playerNumber = setPlayers(twoPd, n);
