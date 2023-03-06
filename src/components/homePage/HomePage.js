@@ -351,6 +351,7 @@ const HomePage = () => {
             <div className="HomePage-container-prob-info">
               <p>prob_of_init_C</p>
               <input
+                className="input"
                 type="number"
                 step="0.01"
                 value={probOfInit}
@@ -364,6 +365,7 @@ const HomePage = () => {
             <div className="HomePage-container-prob-info">
               <p>num_of_tournaments</p>
               <input
+                className="input"
                 type="number"
                 value={numOfTournaments}
                 onChange={(e) =>
@@ -376,6 +378,7 @@ const HomePage = () => {
             <div className="HomePage-container-prob-info">
               <p>num of opponents {">"}=</p>
               <input
+                className="input"
                 type="number"
                 value={numOfOpponents}
                 onChange={(e) =>
@@ -388,6 +391,7 @@ const HomePage = () => {
             <div className="HomePage-container-prob-info">
               <p>prehistory L</p>
               <input
+                className="input"
                 type="number"
                 value={prehistoryLength}
                 onChange={(e) =>
@@ -403,6 +407,7 @@ const HomePage = () => {
             <div className="HomePage-container-parameters-info">
               <p>pop_size</p>
               <input
+                className="input"
                 type="number"
                 value={popSize}
                 onChange={(e) =>
@@ -413,6 +418,7 @@ const HomePage = () => {
             <div className="HomePage-container-parameters-info">
               <p>num_of_generations</p>
               <input
+                className="input"
                 type="number"
                 value={numOfGenerations}
                 onChange={(e) =>
@@ -425,6 +431,7 @@ const HomePage = () => {
             <div className="HomePage-container-parameters-info">
               <p>tournament_size</p>
               <input
+                className="input"
                 type="number"
                 value={tournamentSize}
                 onChange={(e) =>
@@ -437,6 +444,7 @@ const HomePage = () => {
             <div className="HomePage-container-parameters-info">
               <p>crossover_prob</p>
               <input
+                className="input"
                 type="number"
                 step="0.01"
                 value={crossoverProb}
@@ -450,6 +458,7 @@ const HomePage = () => {
             <div className="HomePage-container-parameters-info">
               <p>mutation_prob</p>
               <input
+                className="input"
                 type="number"
                 value={mutationProb}
                 onChange={(e) =>
