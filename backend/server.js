@@ -16,13 +16,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors());
 app.post('/', (req, res) => {
-  res.send('Hello World!');
   const {data} = req.body;
   writeFile(data)
 });
 
 function writeFile(data) {
-  for(let i = 0; i < data.length; i++)
-  fs.writeFile(data[i].filename, data[i].data, { flag: 'w' }, err => {});
+  for(let i = 0; i < data.length; i++) {
+    fs.writeFile(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
+  }
 };
 

@@ -3,6 +3,9 @@ import { readData, createRandomInputData, getRandomInt, setSeed, setPlayers, glo
 import { gener_history_freq, resetFreq } from "./utils";
 import request from "./requests";
 export let points = [];
+export let generationsData = [];
+export let data = [];
+export let debugData = [];
 
 async function sendData(data) {
   await request.post("/", {data})
@@ -44,15 +47,8 @@ export default function Logic(
   setStrategies,
   setStrategiesId
 ) {
-  // var myrng = new Math.seedrandom(Math.random());
-  // console.log(myrng());                // Always 0.9282578795792454
-  // return;
-  // let data = [];
-  // data.push({
-  //   filename: "testxd.txt",
-  //   data: 'test data'
-  // })
-  // sendData(data);
+  data = [];
+ 
   setSeed(clockSeed, seed);
   let playerNumber = n;
   playerNumber = setPlayers(twoPd, n);
@@ -74,6 +70,7 @@ export default function Logic(
     generalHistory = [];
     for (let generation = 0; generation <= numOfGenerations; generation++) {
       console.log(`Generation: ${generation}`);
+      debugData.push(generation)
       standardGame(
         parseInt(numOfTournaments),
         individuals,
@@ -96,7 +93,7 @@ export default function Logic(
       setGenerations((prev) => [...prev, generation]);
       setMaxSumPoints((prev) => [...prev, max]);
       setAvgSumPoints((prev) => [...prev, avg]);
-      individuals = evolve(individuals, parseFloat(crossoverProb), parseFloat(mutationProb), parseInt(tournament_size), elistStrategy);
+      individuals = evolve(individuals, parseFloat(crossoverProb), parseFloat(mutationProb), parseInt(tournament_size), elistStrategy, debug);
       resetScoresindividuals(individuals);
       if(generationsToPrintPlot.includes(generation)) {
         generalHistory.push(calcFreq(gener_history_freq));
@@ -106,6 +103,17 @@ export default function Logic(
   }
   setStrategiesId(strategiesId);
   setStrategies(generalHistory);
+  if(debug) {
+    debugData.push(generationsData);
+    data.push({
+        filename: "debug.txt",
+        flag: 'w',
+        data: debugData.join('\n')
+    });
+
+  }
+  if(data.length)
+  sendData(data);
 }
 
 function standardGame(
