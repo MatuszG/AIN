@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 import Strategies from "../../../Strategies.txt";
-// import Strategies from "../../../Strategies.txt";
 
 import Logic from "../logic/Logic";
 
@@ -87,51 +86,51 @@ const HomePage = () => {
       setStrategyLength(2);
       setStrategyFromFile(array);
     } else {
-      let textDebug = await fetch(Strategies).then((r) => r.text());
-      let index;
       setTwoPd(true);
       setPd(false);
-      index = textDebug.search("pop_size");
-      if (index !== -1)
-        setPopSize(
-          Number(textDebug.slice(index + 9, textDebug.indexOf(";", index + 9)))
-        );
-      index = textDebug.search("l");
-      if (index !== -1)
-        setPrehistory(
-          Number(textDebug.slice(index + 2, textDebug.indexOf(";", index + 2)))
-        );
-      index = textDebug.search("length_of_strategy");
-      if (index !== -1)
-        setStrategyLength(
-          Number(
-            textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
-          )
-        );
-      index = textDebug.search("num_of_tournaments");
-      if (index !== -1)
-        setNumOfTournaments(
-          Number(
-            textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
-          )
-        );
-      index = textDebug.indexOf("\n");
-      if (index !== -1) {
-        let pom1 = 0;
-        let pom2 = 0;
-        for (let i = index + 1; i < textDebug.length; i++) {
-          if (textDebug[i] === "\n") {
-            pom1++;
-            pom2 = 0;
-            continue;
-          }
-          if (textDebug[i] === " " || textDebug[i] === "\r") continue;
-          let copy = [...strategyFromFile];
-          copy[pom1][pom2] = Number(textDebug[i]);
-          setStrategyFromFile(copy);
-          pom2++;
-        }
-      }
+      // let textDebug = await fetch(Strategies).then((r) => r.text());
+      // let index;
+      // index = textDebug.search("pop_size");
+      // if (index !== -1)
+      //   setPopSize(
+      //     Number(textDebug.slice(index + 9, textDebug.indexOf(";", index + 9)))
+      //   );
+      // index = textDebug.search("l");
+      // if (index !== -1)
+      //   setPrehistory(
+      //     Number(textDebug.slice(index + 2, textDebug.indexOf(";", index + 2)))
+      //   );
+      // index = textDebug.search("length_of_strategy");
+      // if (index !== -1)
+      //   setStrategyLength(
+      //     Number(
+      //       textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
+      //     )
+      //   );
+      // index = textDebug.search("num_of_tournaments");
+      // if (index !== -1)
+      //   setNumOfTournaments(
+      //     Number(
+      //       textDebug.slice(index + 19, textDebug.indexOf(";", index + 19))
+      //     )
+      //   );
+      // index = textDebug.indexOf("\n");
+      // if (index !== -1) {
+      //   let pom1 = 0;
+      //   let pom2 = 0;
+      //   for (let i = index + 1; i < textDebug.length; i++) {
+      //     if (textDebug[i] === "\n") {
+      //       pom1++;
+      //       pom2 = 0;
+      //       continue;
+      //     }
+      //     if (textDebug[i] === " " || textDebug[i] === "\r") continue;
+      //     let copy = [...strategyFromFile];
+      //     copy[pom1][pom2] = Number(textDebug[i]);
+      //     setStrategyFromFile(copy);
+      //     pom2++;
+      //   }
+      // }
     }
   }, [debug]);
 

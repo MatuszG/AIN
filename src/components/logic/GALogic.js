@@ -34,11 +34,15 @@ export function findAveragePlayer(individuals) {
     return player;
 }
 
-export function calcFitness(Individuals, numOfTournaments) {
+export function calcFitness(Individuals, numOfTournaments, debug) {
     let sumFitness = 0;
     console.log(sumPoints[0]);
 
     for(let i = 0; i < Individuals.length; i++) {
+        // let tournaments = numOfTournaments;
+        // if(debug) {
+        //     tournaments = numOfTournaments + 1;
+        // }
         Individuals[i].fitness = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         Individuals[i].fitnessPoints = Individuals[i].sumPoints/(Individuals[i].playedGames * numOfTournaments);
         sumFitness += Individuals[i].fitness;
@@ -75,13 +79,15 @@ function findParent(individuals, tournament_size) {
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist, debug) {
     sortIndividuals(individuals);
     let gaInfo = [];
-    gaInfo.push("\nprintf_31:\n");
-    gaInfo.push("\nAfter GA operators\n");
-    gaInfo.push("\ntemp_strategies\n");
-    for(let i = 0; i < individuals.length; i++) {
-        gaInfo.push(individuals[i].strategy.slice().join(' '));
+    if(debug) {
+        gaInfo.push("\nprint_31\n");
+        gaInfo.push("After GA operators");
+        gaInfo.push("\ntemp_strategies");
+        for(let i = 0; i < individuals.length; i++) {
+            gaInfo.push(individuals[i].strategy.slice().join(' '));
+        }
+        gaInfo.push("\nparent_strategies");
     }
-    gaInfo.push("\nparent_strategies\n");
     let parent_strategies = [];
     let parents = [];
     for(let i = 0; i < individuals.length; i++) {
@@ -94,7 +100,9 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
     }
     // console.log('ind', parents.length);
-    gaInfo.push(parent_strategies.join(' '));
+    if(debug) {
+        gaInfo.push(parent_strategies.join(' '));
+    }
 
     let childs = [];
     // console.log(individuals[0]);
@@ -112,9 +120,11 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
     }
     // console.log('child ind', parents.length);
-    gaInfo.push("\nchild_strategies\n");
-    for(let i = 0; i < childs.length; i++) {
-        gaInfo.push(childs[i].strategy.slice().join(' '));
+    if(debug) {
+        gaInfo.push("\nchild_strategies");
+        for(let i = 0; i < childs.length; i++) {
+            gaInfo.push(childs[i].strategy.slice().join(' '));
+        }
     }
     // let selectedIndividuals = [];
     // let strategyLength = individuals[0].strategy.length;
@@ -151,12 +161,14 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     individuals = copyArray(childs);
     mutation(individuals, mutationProb);
 
-    gaInfo.push("\nstrategies\n");
-    for(let i = 0; i < childs.length; i++) {
-        gaInfo.push(childs[i].strategy.slice().join(' '));
+    if(debug) {
+        gaInfo.push("\nstrategies");
+        for(let i = 0; i < childs.length; i++) {
+            gaInfo.push(childs[i].strategy.slice().join(' '));
+        }
     }
-
-    generationsData.push(gaInfo.join('\n'));
+    
+    generationsData.push(gaInfo.join('\n\n'));
 
     return individuals;
 }

@@ -1,3 +1,5 @@
+import { mainInfo } from "./Logic";
+
 export const gener_history_freq = [];
 export let globalPreh = [];
 export let sumPoints = [0];
@@ -20,7 +22,6 @@ export function setSeed(clockSeed, seed) {
         seed = seed;
     }
     myrng = new Math.seedrandom(seed);
-    console.log(myrng());                // Always 0.9282578795792454
 }
 
 
@@ -43,9 +44,15 @@ export function randomRange(strategyLength) {
     return Math.round(myrng() * (strategyLength - 1));
 }
 
-export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile) {
+export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile2, debug) {
     let individuals;
-    if(strategyFromFile === []) {
+    let strategyFromFile = [
+        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,null],
+        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0,null],
+        [0, 0 ,0 ,0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1, null],
+        [0, 0, 1, 0, 0, 1, null]
+    ]
+    if(strategyFromFile === [] && !debug) {
         individuals = createRandomInputData(
           popSize,
           prehistoryLength,
@@ -57,8 +64,8 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
     else {
         let preh = [];
         let j = 0;
-        while(strategyFromFile[2][j] !== null) {
-            preh.push(strategyFromFile[2][j]);
+        while(strategyFromFile[3][j] !== null) {
+            preh.push(strategyFromFile[3][j]);
             j++;
         }
         globalPreh = preh.slice();
@@ -106,11 +113,28 @@ export class Individual {
         this.fitnessPoints = 0;
         this.calculates = 0;
     }
-    calculate(id, playerNumber) {
+    calculate(id, playerNumber, debug) {
         let sumOfPrehistory = getPrehistory(id, playerNumber);
         let strategyId = parseInt(sumOfPrehistory, 2);
+        let debugId = id + 1;
+        if(debug == 0) {
+            mainInfo.push(`strat_id_${debugId} = ${strategyId}`);
+            return strategyId;
+        }
+        else if(debug == 2) {
+            mainInfo.push(`strat_id_${debugId} = ${strategyId}`);
+        }
+        else if(debug == 3) {
+            mainInfo.push(`curr_action_P${debugId} = ${this.strategy[strategyId]}`);
+            return;
+        }
+        else if(debug == 1) {
+            mainInfo.push(`curr_action_P${debugId} = ${this.strategy[strategyId]}`);
+        }
         this.calculates++;
-        gener_history_freq[strategyId]++;
+        if(debug != 0) {
+            gener_history_freq[strategyId]++;
+        }
         return this.strategy[strategyId];
     }
     resetPoints() {
@@ -173,7 +197,7 @@ export function calcFreq() {
     return history_freq;
 }
 
-function getPrehistory(id, playerNumber) {
+export function getPrehistory(id, playerNumber) {
     let prehistory = '';
     let sumOfPrehistory = ''
     let colLength = globalPreh.length / playerNumber;
@@ -193,6 +217,13 @@ function getPrehistory(id, playerNumber) {
     }
     // console.log(prehistory);
     return prehistory;
+}
+
+export function getDebugPrehistory(sumOfPrehistory) {
+    let debugPreh = sumOfPrehistory.split('').slice();
+    let debugPrehNumber = [];
+    for (let i = 0; i < debugPreh.length; i++) debugPrehNumber.push(parseInt(debugPreh[i]));
+    return debugPrehNumber;
 }
 
 // function getPrehistory(id, playerNumber) {

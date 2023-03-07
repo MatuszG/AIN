@@ -24,13 +24,13 @@ app.post('/', (req, res) => {
 
 function writeFile(data) {
   for(let i = 0; i < data.length; i++) {
-    try {
-      fs.unlinkSync('debug.txt');
+    // try {
+    //   fs.unlinkSync('debug.txt');
     
-      console.log("Delete File successfully.");
-    } catch (error) {
-      console.log(error);
-    }
+    //   console.log("Delete File successfully.");
+    // } catch (error) {
+    //   console.log(error);
+    // }
     fs.writeFileSync(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
   }
 };
