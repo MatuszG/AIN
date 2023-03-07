@@ -125,7 +125,7 @@ export default function Logic(
   setStrategies(generalHistory);
   if(debug) {
     data.push({
-        filename: "debug.txt",
+        filename: "./Results/debug.txt",
         flag: 'w',
         data: debugData.join('\n')
     });
