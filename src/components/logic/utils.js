@@ -57,8 +57,8 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
     else {
         let preh = [];
         let j = 0;
-        while(strategyFromFile[popSize][j] !== null) {
-            preh.push(strategyFromFile[popSize][j]);
+        while(strategyFromFile[2][j] !== null) {
+            preh.push(strategyFromFile[2][j]);
             j++;
         }
         globalPreh = preh.slice();
@@ -66,8 +66,8 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
         for(let i = 0; i < popSize; i++) {
             let strategy = [];
             let j = 0;
-            while(strategyFromFile[popSize][j] !== null) {
-                strategy.push(strategyFromFile[popSize][j]);
+            while(strategyFromFile[i][j] !== null) {
+                strategy.push(strategyFromFile[i][j]);
                 j++;
             }
             individuals.push(new Individual(preh, strategy, 0));

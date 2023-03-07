@@ -17,12 +17,21 @@ app.use(express.json());
 app.use(cors());
 app.post('/', (req, res) => {
   const {data} = req.body;
-  writeFile(data)
+  // remove body data
+  // console.log(data);
+  writeFile(data);
 });
 
 function writeFile(data) {
   for(let i = 0; i < data.length; i++) {
-    fs.writeFile(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
+    try {
+      fs.unlinkSync('debug.txt');
+    
+      console.log("Delete File successfully.");
+    } catch (error) {
+      console.log(error);
+    }
+    fs.writeFileSync(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
   }
 };
 

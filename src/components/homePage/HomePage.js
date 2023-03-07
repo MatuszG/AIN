@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import Strategies from "../../../Strategies.txt";
+// import Strategies from "../../../Strategies.txt";
 
 import Logic from "../logic/Logic";
 
@@ -95,10 +96,10 @@ const HomePage = () => {
         setPopSize(
           Number(textDebug.slice(index + 9, textDebug.indexOf(";", index + 9)))
         );
-      index = textDebug.search("l_preh");
+      index = textDebug.search("l");
       if (index !== -1)
         setPrehistory(
-          Number(textDebug.slice(index + 7, textDebug.indexOf(";", index + 7)))
+          Number(textDebug.slice(index + 2, textDebug.indexOf(";", index + 2)))
         );
       index = textDebug.search("length_of_strategy");
       if (index !== -1)

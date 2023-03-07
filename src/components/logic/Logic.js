@@ -7,8 +7,8 @@ export let generationsData = [];
 export let data = [];
 export let debugData = [];
 
-async function sendData(data) {
-  await request.post("/", {data})
+function sendData(data) {
+  request.post("/", {data})
         .then(res=>{
         });
 }
