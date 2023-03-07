@@ -79,7 +79,7 @@ function findParent(individuals, tournament_size) {
 export function evolve(individuals, crossoverProb, mutationProb, tournament_size, elitist, debug) {
     sortIndividuals(individuals);
     let gaInfo = [];
-    if(debug) {
+    if(debug && individuals.length == 3) {
         gaInfo.push("\nprint_31\n");
         gaInfo.push("After GA operators");
         gaInfo.push("\ntemp_strategies");
@@ -100,7 +100,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
     }
     // console.log('ind', parents.length);
-    if(debug) {
+    if(debug && individuals.length == 3) {
         gaInfo.push(parent_strategies.join(' '));
     }
 
@@ -120,7 +120,7 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
         }
     }
     // console.log('child ind', parents.length);
-    if(debug) {
+    if(debug  && individuals.length == 3) {
         gaInfo.push("\nchild_strategies");
         for(let i = 0; i < childs.length; i++) {
             gaInfo.push(childs[i].strategy.slice().join(' '));
@@ -161,14 +161,16 @@ export function evolve(individuals, crossoverProb, mutationProb, tournament_size
     individuals = copyArray(childs);
     mutation(individuals, mutationProb);
 
-    if(debug) {
+    if(debug  && individuals.length == 3) {
         gaInfo.push("\nstrategies");
         for(let i = 0; i < childs.length; i++) {
             gaInfo.push(childs[i].strategy.slice().join(' '));
         }
     }
     
-    generationsData.push(gaInfo.join('\n\n'));
+    if(debug && individuals.length == 3) {
+        generationsData.push(gaInfo.join('\n\n'));
+    }
 
     return individuals;
 }

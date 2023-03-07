@@ -46,12 +46,24 @@ export function randomRange(strategyLength) {
 
 export function readData(popSize, prehistoryLength, playerNumber, strategyFromFile2, debug) {
     let individuals;
-    let strategyFromFile = [
-        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,null],
-        [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0,null],
-        [0, 0 ,0 ,0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1, null],
-        [0, 0, 1, 0, 0, 1, null]
-    ]
+    // console.log(strategyFromFile2);
+    let strategyFromFile = [];
+    if(debug && popSize == 2 && playerNumber == 2) {
+        strategyFromFile = [
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ,0 ,1 ,0 ,1, 0, 1, 0 ,1, 0 ,1 ,0 ,1 ,0 ,1, null],
+            [0, 0, 0 ,0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, null],
+            [0, 1, 1, 0, 0, 0, null]
+        ]
+    }
+    else if(debug && popSize == 3 && playerNumber == 2){
+        strategyFromFile = [
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1 ,0 ,1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,null],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0,null],
+            [0, 0 ,0 ,0 ,0 ,0 ,0, 0, 0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1, null],
+            [0, 0, 1, 0, 0, 1, null]
+        ]
+    }
+    console.log(strategyFromFile);
     if(strategyFromFile === [] && !debug) {
         individuals = createRandomInputData(
           popSize,
@@ -64,8 +76,8 @@ export function readData(popSize, prehistoryLength, playerNumber, strategyFromFi
     else {
         let preh = [];
         let j = 0;
-        while(strategyFromFile[3][j] !== null) {
-            preh.push(strategyFromFile[3][j]);
+        while(strategyFromFile[strategyFromFile.length - 1][j] !== null) {
+            preh.push(strategyFromFile[strategyFromFile.length - 1][j]);
             j++;
         }
         globalPreh = preh.slice();
