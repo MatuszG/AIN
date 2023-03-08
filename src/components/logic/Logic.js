@@ -90,6 +90,7 @@ export default function Logic(
   result3 = [];
   if(numOfRuns == 1) {
     result1.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+    result1.push(`# frequency of game histories`);
     result1.push(`# gen best_fit avg_fit`);
     result2.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
     result2.push(`# gen ${[...Array(strategyLength).keys()].join(' ')}`);
@@ -165,6 +166,7 @@ export default function Logic(
           let results2 = [];
           let results2Plot = [];
           results2.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+          results2.push(`# frequency of game histories`);
           results2.push(`# generation: ${generation}`);
           results2.push(`# history freq_of_game_histories`);
           for(let i = 0; i < calcFreq(history_freq).length; i++) {
