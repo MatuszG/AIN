@@ -5,6 +5,7 @@ import request from "./requests";
 export let points = [];
 export let generationsData = [];
 export let data = [];
+export let datas = [];
 
 export let mainInfo = [];
 export let debugData = [];
@@ -16,7 +17,17 @@ let result3 = [];
 let mResults1 = [];
 
 function sendData(data) {
-  request.post("/", {data});
+  if(data.length > 0) {
+    request.post("/", {data});
+    data = [];
+  }
+}
+
+function sendData2(data) {
+  if(data.length > 0) {
+    request.post("/1", {data});
+    data = [];
+  }
 }
 
 export default function Logic(
@@ -170,23 +181,21 @@ export default function Logic(
           for(let i = 0; i < calcFreq(history_freq).length; i++) {
             results2.push([i, calcFreq(history_freq)[i]].join(' '));
           }
-          data.push({
+          datas.push([{
             filename: `./Results/result_2_gen_${generation}.txt`,
             flag: 'w',
             data: results2.join('\n')
-          });
-
+          }]);
           results2Plot.push("set style data lines");
           results2Plot.push("set xlabel \"History\"");
           results2Plot.push("set ylabel \"Frequency of game histories\"");
           results2Plot.push(`plot 'result_2_gen_${generation}.txt' using 1:2 with lines lc 3 lw 3  title "Frequency of game histories"`);
-          data.push({
+          datas.push([{
             filename: `./Results/result_2_gen_${generation}.plt`,
             flag: 'w',
             data: results2Plot.join('\n')
-          });
-          sendData(data);
-          data = [];
+          }]);
+          
         }
       }
       resetFreq(strategyLength);
@@ -195,7 +204,12 @@ export default function Logic(
       mainInfo = [];
       generationsData = [];
     }
+    
   }
+  for(let i = 0; i < datas.length; i++) {
+    sendData2(datas[i]);
+  }
+  datas = [];
   setStrategiesId(strategiesId);
   setStrategies(generalHistory);
   if(debug) {
@@ -204,6 +218,10 @@ export default function Logic(
         flag: 'w',
         data: debugData.join('\n')
     });
+    if(data.length > 0) {
+      sendData(data);
+      console.log(data);
+    }
   }
 
   if(mResults1.length > 0) {
@@ -221,17 +239,14 @@ export default function Logic(
       flag: 'w',
       data: mResults1.join('\n')
     });
-    if(data.length > 0) {
-      sendData(data);
-    }
+    sendData(data);
+
     data.push({
       filename: "./Results/std_result_1.txt",
       flag: 'w',
       data: std_result_1.join('\n')
     });
-    if(data.length > 0) {
-      sendData(data);
-    }
+    sendData(data);
   }
 
   if(result1.length > 0) {
@@ -240,9 +255,8 @@ export default function Logic(
       flag: 'w',
       data: result1.join('\n')
     });
-  }
-  if(data.length > 0) {
     sendData(data);
+    data = [];
   }
 
   if(result2.length > 0) {
@@ -251,9 +265,8 @@ export default function Logic(
       flag: 'w',
       data: result2.join('\n')
     });
-  }
-  if(data.length > 0) {
     sendData(data);
+    data = [];
   }
 
   if(result3.length > 0) {
@@ -262,12 +275,6 @@ export default function Logic(
       flag: 'w',
       data: result3.join('\n')
     });
-  }
-  if(data.length > 0) {
-    sendData(data);
-  }
-
-  if(data.length > 0) {
     sendData(data);
     debugData = [];
     data = [];
