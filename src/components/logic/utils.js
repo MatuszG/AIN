@@ -1,6 +1,7 @@
 import { mainInfo } from "./Logic";
 
 export const gener_history_freq = [];
+export const history_freq = [];
 export let globalPreh = [];
 export let sumPoints = [0];
 export let myrng;
@@ -146,6 +147,7 @@ export class Individual {
         this.calculates++;
         if(debug != 0) {
             gener_history_freq[strategyId]++;
+            history_freq[strategyId]++;
         }
         return this.strategy[strategyId];
     }
@@ -182,7 +184,7 @@ export function setPlayers(twoPd, n) {
     return playerNumber;
 }
 
-export function setFreq(strategyLength) {
+export function setGeneralFreq(strategyLength) {
     if(gener_history_freq.length === 0) {
         for(let i = 0; i < strategyLength; i++) {
             gener_history_freq.push(0);
@@ -193,17 +195,28 @@ export function setFreq(strategyLength) {
     }
 }
 
-export function resetFreq(strategyLength) {
+export function setFreq(strategyLength) {
+    if(history_freq.length === 0) {
+        for(let i = 0; i < strategyLength; i++) {
+            history_freq.push(0);
+        }
+    }
     for(let i = 0; i < strategyLength; i++) {
-        gener_history_freq[i] = 0;
+        history_freq[i] = 0;
     }
 }
 
-export function calcFreq() {
+export function resetFreq(strategyLength) {
+    for(let i = 0; i < strategyLength; i++) {
+        history_freq[i] = 0;
+    }
+}
+
+export function calcFreq(freq) {
     let initialValue = 0;
-    let history_freq = gener_history_freq.slice();
+    let history_freq = freq.slice();
     let sum = history_freq.reduce((accumulator, currentValue) => accumulator + currentValue, initialValue);
-    for(let i = 0; i < gener_history_freq.length; i++) {
+    for(let i = 0; i < freq.length; i++) {
         history_freq[i] = history_freq[i]/sum;
     }
     return history_freq;

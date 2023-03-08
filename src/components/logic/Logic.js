@@ -1,5 +1,5 @@
 import { calcFitness, evolve, findAveragePlayer, findBestPlayer } from "./GALogic";
-import { readData, createRandomInputData, getRandomInt, setSeed, setPlayers, globalPreh, sumPoints, setFreq, calcFreq, copyArray, getPrehistory, getDebugPrehistory } from "./utils";
+import { readData, createRandomInputData, getRandomInt, setSeed, setPlayers, globalPreh, sumPoints, setFreq, calcFreq, copyArray, getPrehistory, getDebugPrehistory, setGeneralFreq, history_freq } from "./utils";
 import { gener_history_freq, resetFreq } from "./utils";
 import request from "./requests";
 export let points = [];
@@ -8,6 +8,12 @@ export let data = [];
 
 export let mainInfo = [];
 export let debugData = [];
+
+let result1 = [];
+let result2 = [];
+let results2 = [];
+let result3 = [];
+let mResults1 = [];
 
 function sendData(data) {
   request.post("/", {data})
@@ -50,12 +56,12 @@ export default function Logic(
   setStrategiesId
 ) {
   data = [];
- 
   setSeed(clockSeed, seed);
   let playerNumber = n;
   playerNumber = setPlayers(twoPd, n);
   const strategyLength = Math.pow(2, playerNumber * parseInt(prehistoryLength));
   setFreq(strategyLength);
+  setGeneralFreq(strategyLength);
 
   let strategiesId;
   let generalHistory;
@@ -79,10 +85,38 @@ export default function Logic(
     mainInfo.push(globalPreh.slice().join(' '));
     mainInfo.push('');
   }
+  result1 = [];
+  result2 = [];
+  result3 = [];
+  if(numOfRuns == 1) {
+    result1.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+    result1.push(`# gen best_fit avg_fit`);
+    result2.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+    result2.push(`# gen ${[...Array(strategyLength).keys()].join(' ')}`);
+    result3.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+    result3.push('# best strategy');
+    result3.push(`# gen ${[...Array(strategyLength).keys()].join(' ')}`);
+  }
+  let sums = []
+  let maxs = [];
+  let std_dev = [];
+  for(let i = 0; i <= numOfGenerations; i++) {
+    sums.push(0);
+    std_dev.push(0);
+    maxs.push([]);
+  }
 
   while (runs++ < numOfRuns) {
     strategiesId = [...Array(strategyLength).keys()];
     generalHistory = [];
+    if(numOfRuns > 1) {
+      if(runs > 1) {
+        mResults1.push('');
+      }
+      mResults1.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+      mResults1.push(`# Run: ${runs}`);
+      mResults1.push(`# gen best_fit avg_fit`);
+    }
     for (let generation = 0; generation <= numOfGenerations; generation++) {
       console.log(`Generation: ${generation}`);
       // debugData.push(generation)
@@ -106,15 +140,56 @@ export default function Logic(
       const avgPlayer = findAveragePlayer(individuals);
       const max = bestPlayer.fitnessPoints;
       const avg = avgPlayer.fitnessPoints;
+      let row = [];
+      row.push(generation);
+      row.push(max);
+      row.push(avg);
+      if(numOfRuns == 1) {
+        result1.push(row.join(' '));
+        result2.push([generation, calcFreq(history_freq).join(' ')].join(' '));
+        result3.push([generation, bestPlayer.strategy.slice().join(' ')].join(' '));
+      }
+      else {
+        sums[generation] += avg;
+        maxs[generation].push(max);
+        mResults1.push(row.join(' '));
+      }
       setGenerations((prev) => [...prev, generation]);
       setMaxSumPoints((prev) => [...prev, max]);
       setAvgSumPoints((prev) => [...prev, avg]);
       individuals = evolve(individuals, parseFloat(crossoverProb), parseFloat(mutationProb), parseInt(tournament_size), elistStrategy, debug);
       resetScoresindividuals(individuals);
       if(generationsToPrintPlot.includes(generation)) {
-        generalHistory.push(calcFreq(gener_history_freq));
-        resetFreq(strategyLength);
+        generalHistory.push(calcFreq(history_freq));
+        if(numOfRuns == 1) {
+          let results2 = [];
+          let results2Plot = [];
+          results2.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+          results2.push(`# generation: ${generation}`);
+          results2.push(`# history freq_of_game_histories`);
+          for(let i = 0; i < calcFreq(history_freq).length; i++) {
+            results2.push([i, calcFreq(history_freq)[i]].join(' '));
+          }
+          data.push({
+            filename: `./Results/result_2_gen_${generation}.txt`,
+            flag: 'w',
+            data: results2.join('\n')
+          });
+
+          results2Plot.push("set style data lines");
+          results2Plot.push("set xlabel \"History\"");
+          results2Plot.push("set ylabel \"Frequency of game histories\"");
+          results2Plot.push(`plot 'result_2_gen_${generation}.txt' using 1:2 with lines lc 3 lw 3  title "Frequency of game histories"`);
+          data.push({
+            filename: `./Results/result_2_gen_${generation}.plt`,
+            flag: 'w',
+            data: results2Plot.join('\n')
+          });
+          sendData(data);
+          data = [];
+        }
       }
+      resetFreq(strategyLength);
       debugData.push(mainInfo.join('\n'));
       debugData.push(generationsData);
       mainInfo = [];
@@ -129,9 +204,56 @@ export default function Logic(
         flag: 'w',
         data: debugData.join('\n')
     });
-
   }
-  if(data !== null) {
+
+  if(mResults1.length > 0) {
+    let std_result_1 = [];
+    std_result_1.push(`# seed: ${seed} playerNumbers: ${playerNumber} popSize: ${popSize} strategyLength: ${strategyLength}`);
+    std_result_1.push(`# gen avg_best std_best`);
+    for(let i = 0; i <= numOfGenerations; i++) {
+      sums[i] = sums[i]/numOfRuns;
+      std_dev[i] = Math.sqrt(maxs[i].reduce((acc, val) => acc + (val - sums[i]) ** 2, 0) / numOfRuns);
+      std_result_1.push([i,sums[i],std_dev[i]].join(' '));
+    }
+
+    // for()
+    data.push({
+      filename: "./Results/m_result_1.txt",
+      flag: 'w',
+      data: mResults1.join('\n')
+    });
+    data.push({
+      filename: "./Results/std_result_1.txt",
+      flag: 'w',
+      data: std_result_1.join('\n')
+    });
+  }
+
+  if(result1.length > 0) {
+    data.push({
+      filename: "./Results/result_1.txt",
+      flag: 'w',
+      data: result1.join('\n')
+    });
+  }
+
+  if(result2.length > 0) {
+    data.push({
+      filename: "./Results/result_2.txt",
+      flag: 'w',
+      data: result2.join('\n')
+    });
+  }
+
+  if(result3.length > 0) {
+    data.push({
+      filename: "./Results/result_3.txt",
+      flag: 'w',
+      data: result3.join('\n')
+    });
+  }
+
+  if(data.length > 0) {
     sendData(data);
     debugData = [];
     data = [];

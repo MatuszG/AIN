@@ -10,8 +10,8 @@ import {
   Title,
   Legend,
 } from "chart.js";
-// import Strategies from "../../../Strategies.txt";
-import Strategies from "./Strategies.txt";
+import Strategies from "../../../Strategies.txt";
+// import Strategies from "./Strategies.txt";
 
 import Logic from "../logic/Logic";
 
