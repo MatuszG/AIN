@@ -22,7 +22,7 @@ app.post('/', (req, res) => {
   // remove body data
   // console.log(data);
   writeFile(data);
-
+  return res.status(200);
 });
 
 function writeFile(data) {
@@ -57,7 +57,7 @@ function writeFile(data) {
   //   }
   // }
   for(let i = 0; i < data.length; i++) {
-    fs.writeFile(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
+    fs.writeFileSync(data[i].filename, data[i].data, { flag: data[i].flag }, err => {});
   }
 }
 

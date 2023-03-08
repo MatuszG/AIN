@@ -16,9 +16,7 @@ let result3 = [];
 let mResults1 = [];
 
 function sendData(data) {
-  request.post("/", {data})
-        .then(res=>{
-        });
+  request.post("/", {data});
 }
 
 export default function Logic(
@@ -218,17 +216,22 @@ export default function Logic(
       std_result_1.push([i,sums[i],std_dev[i]].join(' '));
     }
 
-    // for()
     data.push({
       filename: "./Results/m_result_1.txt",
       flag: 'w',
       data: mResults1.join('\n')
     });
+    if(data.length > 0) {
+      sendData(data);
+    }
     data.push({
       filename: "./Results/std_result_1.txt",
       flag: 'w',
       data: std_result_1.join('\n')
     });
+    if(data.length > 0) {
+      sendData(data);
+    }
   }
 
   if(result1.length > 0) {
@@ -238,6 +241,9 @@ export default function Logic(
       data: result1.join('\n')
     });
   }
+  if(data.length > 0) {
+    sendData(data);
+  }
 
   if(result2.length > 0) {
     data.push({
@@ -246,6 +252,9 @@ export default function Logic(
       data: result2.join('\n')
     });
   }
+  if(data.length > 0) {
+    sendData(data);
+  }
 
   if(result3.length > 0) {
     data.push({
@@ -253,6 +262,9 @@ export default function Logic(
       flag: 'w',
       data: result3.join('\n')
     });
+  }
+  if(data.length > 0) {
+    sendData(data);
   }
 
   if(data.length > 0) {
